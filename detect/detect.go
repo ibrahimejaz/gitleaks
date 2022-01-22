@@ -103,12 +103,16 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 			} else {
 				findings = append(findings, f)
 			}
+
 			// check if rule has extractor and augment finding if match
 			for _, extractor := range r.Extractors {
 				if extractor.MustContain != "" {
 					if strings.Contains(strings.ToLower(f.Match),
 						strings.ToLower(extractor.MustContain)) {
-						f.RuleID = extractor.ID
+						if extractor.Regex.MatchString(f.Secret) {
+							fmt.Println(f)
+							f.RuleID = extractor.ID
+						}
 					}
 				}
 			}

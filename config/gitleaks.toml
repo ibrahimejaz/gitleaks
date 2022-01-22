@@ -541,13 +541,13 @@ regex = '''['\"]([a-z0-9]{16})['\"]'''
 id = "discord-api-token"
 description = "Discord API token"
 mustContain = "discord"
-regex = '''['\"]([a-h0-9]{64})['\"]'''
+regex = '''[a-h0-9]{64}'''
 
-[[rules]]
-id = "new-relic-user-api-id"
-description = "New Relic user API ID"
-regex = '''new relic'''
-secretGroup = 3
+# [[rules]]
+# id = "new-relic-user-api-id"
+# description = "New Relic user API ID"
+# regex = '''new relic'''
+# secretGroup = 3
 
 # global allow list
 [allowlist]
