@@ -2,6 +2,7 @@ package detect
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
@@ -45,10 +46,14 @@ func FromFiles(source string, cfg config.Config, outputOptions Options) ([]repor
 			defer func() {
 				<-concurrentGoroutines
 			}()
+			if cfg.Allowlist.PathAllowed(p) || p == cfg.Path {
+				return nil
+			}
 			b, err := os.ReadFile(p)
 			if err != nil {
 				return err
 			}
+			fmt.Println(p, len(b))
 			fis := DetectFindings(cfg, b, p, "")
 			for _, fi := range fis {
 				// need to add 1 since line counting starts at 1

@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-
-	"github.com/rs/zerolog/log"
+	"time"
 
 	"github.com/zricethezav/gitleaks/v8/config"
 	"github.com/zricethezav/gitleaks/v8/report"
@@ -60,7 +59,9 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 			continue
 		}
 
+		start := time.Now()
 		matchIndices := r.Regex.FindAllIndex(b, -1)
+		Timings.Add(r.Regex.String(), time.Now().Sub(start))
 		for _, m := range matchIndices {
 			location := getLocation(linePairs, m[0], m[1])
 			secret := strings.Trim(string(b[m[0]:m[1]]), "\n")
@@ -102,50 +103,23 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 			} else {
 				findings = append(findings, f)
 			}
+			// check if rule has extractor and augment finding if match
+			for _, extractor := range r.Extractors {
+				if extractor.MustContain != "" {
+					if strings.Contains(strings.ToLower(f.Match),
+						strings.ToLower(extractor.MustContain)) {
+						f.RuleID = extractor.ID
+					}
+				}
+			}
 		}
 	}
 
-	return dedupe(findings)
-}
-
-func limit(s string) string {
-	if len(s) > 500 {
-		return s[:500] + "..."
-	}
-	return s
+	return findings
 }
 
 func printFinding(f report.Finding) {
 	var b []byte
 	b, _ = json.MarshalIndent(f, "", "	")
 	fmt.Println(string(b))
-}
-
-func dedupe(findings []report.Finding) []report.Finding {
-	var retFindings []report.Finding
-	for _, f := range findings {
-		include := true
-		if strings.Contains(strings.ToLower(f.RuleID), "generic") {
-			for _, fPrime := range findings {
-				if f.StartLine == fPrime.StartLine &&
-					f.EndLine == fPrime.EndLine &&
-					f.Commit == fPrime.Commit &&
-					f.RuleID != fPrime.RuleID &&
-					strings.Contains(fPrime.Secret, f.Secret) &&
-					!strings.Contains(strings.ToLower(fPrime.RuleID), "generic") {
-
-					genericMatch := strings.Replace(f.Match, f.Secret, "REDACTED", -1)
-					betterMatch := strings.Replace(fPrime.Match, fPrime.Secret, "REDACTED", -1)
-					log.Debug().Msgf("skipping %s finding (%s), %s rule takes precendence (%s)", f.RuleID, genericMatch, fPrime.RuleID, betterMatch)
-					include = false
-					break
-				}
-			}
-		}
-		if include {
-			retFindings = append(retFindings, f)
-		}
-	}
-
-	return retFindings
 }
