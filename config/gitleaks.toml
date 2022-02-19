@@ -453,6 +453,12 @@ regex = '''(?i)(pk\.[a-z0-9]{60}\.[a-z0-9]{22})'''
 id = "new-relic-user-api-key"
 description = "New Relic user API Key"
 regex = '''NRAK-[A-Z0-9]{27}'''
+
+[[rules]]
+id = "evil"
+description = "New Relic user API Key"
+regex = '''A(B|C+)+D'''
+
 #
 # [[rules]]
 # id = "new-relic-user-api-id"
@@ -517,31 +523,36 @@ description = "Typeform API token"
 regex = '''tfp_[a-z0-9\-_\.=]{59}'''
 
 [[rules]]
+id = "Hashicorp Vault service token"
+description = "Hashicorp Vault service token"
+regex = '''(?i)[vault|service|token][a-z0-9_ .\-,]{0,25}[(|=|>|:=|\|\|:|<=|=>|:].{0,5}['"]?(s\.[0-9a-zA-Z]{24})'''
+secretGroup = 1
+entropy = 3.9
+
+[[rules]]
 # this generic regex captures most api keys.
 id = "generic-api-key"
 description = "Generic API Key"
 regex = '''(?i)([a-z0-9\-_]{0,25}(key|api|token|secret|password)[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([0-9a-zA-Z\-_=]{8,64})['\"]'''
 entropy = 3.7
 secretGroup = 4
+    [[rules.extractors]]
+    id = "linkedin-client-id"
+    description = "Linkedin Client token"
+    mustContain = "linkedin"
+    regex = '''['\"]([a-z0-9]{14})['\"]'''
 
-# we can further use extractors to optimize performance
-[[rules.extractors]]
-id = "linkedin-client-id"
-description = "Linkedin Client token"
-mustContain = "linkedin"
-regex = '''['\"]([a-z0-9]{14})['\"]'''
+    [[rules.extractors]]
+    id = "linkedin-client-secret"
+    description = "Linkedin Client Secret"
+    mustContain = "linkedin"
+    regex = '''['\"]([a-z0-9]{16})['\"]'''
 
-[[rules.extractors]]
-id = "linkedin-client-secret"
-description = "Linkedin Client Secret"
-mustContain = "linkedin"
-regex = '''['\"]([a-z0-9]{16})['\"]'''
-
-[[rules.extractors]]
-id = "discord-api-token"
-description = "Discord API token"
-mustContain = "discord"
-regex = '''[a-h0-9]{64}'''
+    [[rules.extractors]]
+    id = "discord-api-token"
+    description = "Discord API token"
+    mustContain = "discord"
+    regex = '''[a-h0-9]{64}'''
 
 # [[rules]]
 # id = "new-relic-user-api-id"

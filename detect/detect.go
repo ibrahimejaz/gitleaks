@@ -20,12 +20,13 @@ const MAXGOROUTINES = 4
 
 func DetectFindings(cfg config.Config, b []byte, filePath string, commit string) []report.Finding {
 	var findings []report.Finding
-	linePairs := regexp.MustCompile("\n").FindAllIndex(b, -1)
 
 	// check if we should skip file based on the global allowlist or if the file is the same as the gitleaks config
 	if cfg.Allowlist.PathAllowed(filePath) || filePath == cfg.Path {
 		return findings
 	}
+
+	linePairs := regexp.MustCompile("\n").FindAllIndex(b, -1)
 
 	for _, r := range cfg.Rules {
 		pathSkip := false
