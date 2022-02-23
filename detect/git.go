@@ -1,7 +1,7 @@
 package detect
 
 import (
-	"fmt"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -11,36 +11,6 @@ import (
 	"github.com/zricethezav/gitleaks/v8/config"
 	"github.com/zricethezav/gitleaks/v8/report"
 )
-
-type RegexTiming struct {
-	data map[string]time.Duration
-	mu   sync.Mutex
-}
-
-func (r *RegexTiming) Add(regex string, duration time.Duration) {
-	r.mu.Lock()
-	// fmt.Println("adding ", regex, duration)
-
-	r.data[regex] = r.data[regex] + duration
-	r.mu.Unlock()
-}
-
-func (r *RegexTiming) Report() {
-	for k, v := range r.data {
-		fmt.Println(k[0:14], "...........", v)
-	}
-	// b, err := json.MarshalIndent(r.data, "", "  ")
-	// if err != nil {
-	// 	fmt.Println("error:", err)
-	// }
-	// fmt.Print(string(b))
-}
-
-var Timings RegexTiming
-
-func init() {
-	Timings.data = make(map[string]time.Duration)
-}
 
 // FromGit accepts a gitdiff.File channel (structure output from `git log -p`) and a configuration
 // struct. Files from the gitdiff.File channel are then checked against each rule in the configuration to
@@ -56,6 +26,7 @@ func FromGit(files <-chan *gitdiff.File, cfg config.Config, outputOptions Option
 		if f.PatchHeader != nil {
 			commitMap[f.PatchHeader.SHA] = true
 		}
+		start := time.Now()
 		wg.Add(1)
 		concurrentGoroutines <- struct{}{}
 		go func(f *gitdiff.File) {
@@ -118,10 +89,12 @@ func FromGit(files <-chan *gitdiff.File, cfg config.Config, outputOptions Option
 				}
 			}
 		}(f)
+		fileTimings.Add(filepath.Ext(f.NewName), time.Since(start))
 	}
 
 	wg.Wait()
-	Timings.Report()
+	timings.Report()
+	// fileTimings.Report()
 	log.Debug().Msgf("%d commits scanned. Note: this number might be smaller than expected due to commits with no additions", len(commitMap))
 	return findings
 }

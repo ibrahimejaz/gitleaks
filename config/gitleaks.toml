@@ -1,34 +1,5 @@
 title = "gitleaks config"
 
-# Gitleaks rules are defined by regular expressions and entropy ranges.
-# Some secrets have unique signatures which make detecting those secrets easy.
-# Examples of those secrets would be Gitlab Personal Access Tokens, AWS keys, and Github Access Tokens.
-# All these examples have defined prefixes like `glpat`, `AKIA`, `ghp_`, etc.
-#
-# Other secrets might just be a hash which means we need to write more complex rules to verify
-# that what we are matching is a secret.
-#
-# Here is an example of a semi-generic secret
-#
-#   discord_client_secret = "8dyfuiRyq=vVc3RRr_edRk-fK__JItpZ"
-#
-# We can write a regular expression to capture the variable name (identifier),
-# the assignment symbol (like '=' or ':='), and finally the actual secret.
-# The structure of a rule to match this example secret is below:
-#
-#                                                           Beginning string
-#                                                               quotation
-#                                                                   │            End string quotation
-#                                                                   │                      │
-#                                                                   ▼                      ▼
-#    (?i)(discord[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9=_\-]{32})['\"]
-#
-#                   ▲                              ▲                                ▲
-#                   │                              │                                │
-#                   │                              │                                │
-#              identifier                  assignment symbol
-#                                                                                Secret
-#
 [[rules]]
 id = "gitlab-pat"
 description = "GitLab Personal Access Token"
@@ -119,24 +90,18 @@ regex = '''xox[baprs]-([0-9a-zA-Z]{10,48})?'''
 [[rules]]
 id = "stripe-access-token"
 description = "Stripe"
-regex = '''(?i)(sk|pk)_(test|live)_[0-9a-z]{10,32}'''
+regex = '''[sk|pk]_[test|live]_[0-9a-z]{10,32}'''
 #
-# [[rules]]
-# id = "pypi-upload-token"
-# description = "PyPI upload token"
-# regex = '''pypi-AgEIcHlwaS5vcmc[A-Za-z0-9-_]{50,1000}'''
+[[rules]]
+id = "pypi-upload-token"
+description = "PyPI upload token"
+regex = '''pypi-AgEIcHlwaS5vcmc[A-Za-z0-9-_]{50,1000}'''
 #
 [[rules]]
 id = "gcp-service-account"
 description = "Google (GCP) Service-account"
 regex = '''\"type\": \"service_account\"'''
-#
-# [[rules]]
-# id = "heroku-api-key"
-# description = "Heroku API Key"
-# regex = ''' (?i)(heroku[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12})['\"]'''
-# secretGroup = 3
-#
+
 [[rules]]
 id = "slack-web-hook"
 description = "Slack Webhook"
@@ -152,24 +117,6 @@ id = "age-secret-key"
 description = "Age secret key"
 regex = '''AGE-SECRET-KEY-1[QPZRY9X8GF2TVDW0S3JN54KHCE6MUA7L]{58}'''
 #
-# [[rules]]
-# id = "facebook-token"
-# description = "Facebook token"
-# regex = '''(?i)(facebook[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-f0-9]{32})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "twitter-token"
-# description = "Twitter token"
-# regex = '''(?i)(twitter[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-f0-9]{35,44})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "adobe-client-id"
-# description = "Adobe Client ID (Oauth Web)"
-# regex = '''(?i)(adobe[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-f0-9]{32})['\"]'''
-# secretGroup = 3
-#
 [[rules]]
 id = "adobe-client-secret"
 description = "Adobe Client Secret"
@@ -180,112 +127,15 @@ id = "alibaba-access-key-id"
 description = "Alibaba AccessKey ID"
 regex = '''(LTAI)(?i)[a-z0-9]{20}'''
 #
-# [[rules]]
-# id = "alibaba-secret-key"
-# description = "Alibaba Secret Key"
-# regex = '''(?i)(alibaba[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9]{30})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "asana-client-id"
-# description = "Asana Client ID"
-# regex = '''(?i)(asana[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([0-9]{16})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "asana-client-secret"
-# description = "Asana Client Secret"
-# regex = '''(?i)(asana[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9]{32})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "atlassian-api-token"
-# description = "Atlassian API token"
-# regex = '''(?i)(atlassian[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9]{24})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "bitbucket-client-id"
-# description = "Bitbucket client ID"
-# regex = '''(?i)(bitbucket[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9]{32})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "bitbucket-client-secret"
-# description = "Bitbucket client secret"
-# regex = '''(?i)(bitbucket[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9_\-]{64})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "beamer-api-token"
-# description = "Beamer API token"
-# regex = '''(?i)(beamer[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"](b_[a-z0-9=_\-]{44})['\"]'''
-# secretGroup = 3
-#
 [[rules]]
 id = "clojars-api-token"
 description = "Clojars API token"
 regex = '''(CLOJARS_)(?i)[a-z0-9]{60}'''
 #
-# [[rules]]
-# id = "contentful-delivery-api-token"
-# description = "Contentful delivery API token"
-# regex = '''(?i)(contentful[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9\-=_]{43})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "contentful-preview-api-token"
-# description = "Contentful preview API token"
-# regex = '''(?i)(contentful[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9\-=_]{43})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "databricks-api-token"
-# description = "Databricks API token"
-# regex = '''dapi[a-h0-9]{32}'''
-#
-# [[rules]]
-# id = "discord-api-token"
-# description = "Discord API key"
-# regex = '''(?i)(discord[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-h0-9]{64})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "discord-client-id"
-# description = "Discord client ID"
-# regex = '''(?i)(discord[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([0-9]{18})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "discord-client-secret"
-# description = "Discord client secret"
-# regex = '''(?i)(discord[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9=_\-]{32})['\"]'''
-# secretGroup = 3
-#
 [[rules]]
 id = "doppler-api-token"
 description = "Doppler API token"
 regex = '''(dp\.pt\.)(?i)[a-z0-9]{43}'''
-#
-# [[rules]]
-# id = "dropbox-api-secret"
-# description = "Dropbox API secret/key"
-# regex = '''(?i)(dropbox[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9]{15})['\"]'''
-#
-# [[rules]]
-# id = "dropbox--api-key"
-# description = "Dropbox API secret/key"
-# regex = '''(?i)(dropbox[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9]{15})['\"]'''
-#
-# [[rules]]
-# id = "dropbox-short-lived-api-token"
-# description = "Dropbox short lived API token"
-# regex = '''(?i)(dropbox[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"](sl\.[a-z0-9\-=_]{135})['\"]'''
-#
-# [[rules]]
-# id = "dropbox-long-lived-api-token"
-# description = "Dropbox long lived API token"
-# regex = '''(?i)(dropbox[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"][a-z0-9]{11}(AAAAAAAAAA)[a-z0-9\-_=]{43}['\"]'''
 #
 [[rules]]
 id = "duffel-api-token"
@@ -302,28 +152,11 @@ id = "easypost-api-token"
 description = "EasyPost API token"
 regex = '''EZ(A|T)K(?i)[a-z0-9]{54}'''
 #
-# [[rules]]
-# id = "easypost-test-api-token"
-# description = "EasyPost test API token"
-# regex = '''EZTK(?i)[a-z0-9]{54}'''
+[[rules]]
+id = "easypost-test-api-token"
+description = "EasyPost test API token"
+regex = '''EZTK(?i)[a-z0-9]{54}'''
 #
-# [[rules]]
-# id = "fastly-api-token"
-# description = "Fastly API token"
-# regex = '''(?i)(fastly[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9\-=_]{32})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "finicity-client-secret"
-# description = "Finicity client secret"
-# regex = '''(?i)(finicity[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-z0-9]{20})['\"]'''
-# secretGroup = 3
-#
-# [[rules]]
-# id = "finicity-api-token"
-# description = "Finicity API token"
-# regex = '''(?i)(finicity[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([a-f0-9]{32})['\"]'''
-# secretGroup = 3
 #
 [[rules]]
 id = "flutterweave-public-key"
@@ -344,11 +177,6 @@ regex = '''FLWSECK_TEST[a-h0-9]{12}'''
 id = "frameio-api-token"
 description = "Frame.io API token"
 regex = '''fio-u-(?i)[a-z0-9-_=]{64}'''
-#
-# [[rules]]
-# id = "gocardless-api-token"
-# description = "GoCardless API token"
-# regex = '''['\"]live_(?i)[a-z0-9-_=]{40}['\"]'''
 #
 [[rules]]
 id = "grafana-api-token"
@@ -454,11 +282,6 @@ id = "new-relic-user-api-key"
 description = "New Relic user API Key"
 regex = '''NRAK-[A-Z0-9]{27}'''
 
-[[rules]]
-id = "evil"
-description = "New Relic user API Key"
-regex = '''A(B|C+)+D'''
-
 #
 # [[rules]]
 # id = "new-relic-user-api-id"
@@ -522,43 +345,147 @@ id = "typeform-api-token"
 description = "Typeform API token"
 regex = '''tfp_[a-z0-9\-_\.=]{59}'''
 
-[[rules]]
-id = "Hashicorp Vault service token"
-description = "Hashicorp Vault service token"
-regex = '''(?i)[vault|service|token][a-z0-9_ .\-,]{0,25}[(|=|>|:=|\|\|:|<=|=>|:].{0,5}['"]?(s\.[0-9a-zA-Z]{24})'''
-secretGroup = 1
-entropy = 3.9
+# [[rules]]
+# id = "Hashicorp Vault service token"
+# description = "Hashicorp Vault service token"
+# regex = '''(?i)[vault|service|token][a-z0-9_ .\-,]{0,25}[(|=|>|:=|\|\|:|<=|=>|:].{0,5}['"]?(s\.[0-9a-zA-Z]{24})'''
+# secretGroup = 1
+# entropy = 3.9
 
 [[rules]]
 # this generic regex captures most api keys.
+# extractors are used to determine what _kind_ of api keys were captured.
 id = "generic-api-key"
 description = "Generic API Key"
 regex = '''(?i)([a-z0-9\-_]{0,25}(key|api|token|secret|password)[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([0-9a-zA-Z\-_=]{8,64})['\"]'''
 entropy = 3.7
 secretGroup = 4
-    [[rules.extractors]]
-    id = "linkedin-client-id"
-    description = "Linkedin Client token"
-    mustContain = "linkedin"
-    regex = '''['\"]([a-z0-9]{14})['\"]'''
-
-    [[rules.extractors]]
-    id = "linkedin-client-secret"
-    description = "Linkedin Client Secret"
-    mustContain = "linkedin"
-    regex = '''['\"]([a-z0-9]{16})['\"]'''
-
-    [[rules.extractors]]
-    id = "discord-api-token"
-    description = "Discord API token"
-    mustContain = "discord"
-    regex = '''[a-h0-9]{64}'''
-
-# [[rules]]
-# id = "new-relic-user-api-id"
-# description = "New Relic user API ID"
-# regex = '''new relic'''
-# secretGroup = 3
+# extractors will check the regex captured by the parent's "secretGroup"
+[[rules.extractors]]
+id = "linkedin-client-id"
+description = "Linkedin Client token"
+mustContain = "linkedin"
+regex = '''[a-z0-9]{14}'''
+[[rules.extractors]]
+id = "linkedin-client-secret"
+description = "Linkedin Client Secret"
+mustContain = "linkedin"
+regex = '''[a-z0-9]{16}'''
+[[rules.extractors]]
+id = "heroku-api-key"
+description = "Heroku API Key"
+mustContain = "heroku"
+regex = ''' [0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}'''
+[[rules.extractors]]
+id = "facebook-token"
+description = "Facebook token"
+mustContain = "facebook"
+regex = '''[a-f0-9]{32}'''
+[[rules.extractors]]
+id = "twitter-token"
+description = "Twitter token"
+mustContain = "twitter"
+regex = '''[a-f0-9]{35,44}'''
+[[rules.extractors]]
+id = "adobe-client-id"
+description = "Adobe Client ID (Oauth Web)"
+mustContain = "adobe"
+regex = '''[a-f0-9]{32}'''
+[[rules.extractors]]
+id = "alibaba-secret-key"
+description = "Alibaba Secret Key"
+mustContain = "alibaba"
+regex = '''[a-z0-9]{30}'''
+[[rules.extractors]]
+id = "asana-client-id"
+description = "Asana Client ID"
+mustContain = "asana"
+regex = '''[0-9]{16}'''
+[[rules.extractors]]
+id = "asana-client-secret"
+description = "Asana Client Secret"
+mustContain = "asana"
+regex = '''[a-z0-9]{32}'''
+[[rules.extractors]]
+id = "atlassian-api-token"
+description = "Atlassian API token"
+mustContain = "atlassian"
+regex = '''[a-z0-9]{24}'''
+[[rules.extractors]]
+id = "bitbucket-client-id"
+description = "Bitbucket client ID"
+mustContain = "bitbucket"
+regex = '''[a-z0-9]{32}['\"]''' # TODO needs a limiter to prevent collison with client-secret
+[[rules.extractors]]
+id = "bitbucket-client-secret"
+description = "Bitbucket client secret"
+mustContain = "bitbucket"
+regex = '''[a-z0-9_\-]{64}'''
+[[rules.extractors]]
+id = "beamer-api-token"
+description = "Beamer API token"
+mustContain = "beamer"
+regex = '''b_[a-z0-9=_\-]{44}'''
+[[rules.extractors]]
+id = "contentful-api-token"
+description = "Contentful delivery API token"
+mustContain = "contentful"
+regex = '''[a-z0-9\-=_]{43}'''
+[[rules.extractors]]
+id = "databricks-api-token"
+description = "Databricks API token"
+mustContain = "databricks"
+regex = '''dapi[a-h0-9]{32}''' # TODO this _could_ be a standalone rule?
+[[rules.extractors]]
+id = "discord-api-token"
+description = "Discord API key"
+mustContain = "discord"
+regex = '''[a-h0-9]{64}'''
+# [[rules.extractors]]
+# id = "discord-client-id"
+# description = "Discord client ID"
+# mustContain = "discord"
+# regex = '''[0-9]{18}''' # TODO needs a limiter
+# [[rules.extractors]]
+# id = "discord-client-secret"
+# description = "Discord client secret"
+# mustContain = "discord"
+# regex = '''[a-z0-9=_\-]{32}''' # TODO needs a limiter
+[[rules.extractors]]
+id = "dropbox-api-secret"
+description = "Dropbox API secret/key"
+mustContain = "dropbox"
+regex = '''[a-z0-9]{15}'''
+[[rules.extractors]]
+id = "dropbox-short-lived-api-token"
+description = "Dropbox short lived API token"
+mustContain = "dropbox"
+regex = '''sl\.[a-z0-9\-=_]{135}''' # TODO this is an annoying one... might be better to leave as its own
+[[rules.extractors]]
+id = "dropbox-long-lived-api-token"
+description = "Dropbox long lived API token"
+mustContain = "dropbox"
+regex = '''[a-z0-9]{11}(AAAAAAAAAA)[a-z0-9\-_=]{43}''' # TODO make check this
+[[rules.extractors]]
+id = "fastly-api-token"
+description = "Fastly API token"
+mustContain = "fastly"
+regex = '''[a-z0-9\-=_]{32}'''
+[[rules.extractors]]
+id = "finicity-client-secret"
+description = "Finicity client secret"
+mustContain = "finicity"
+regex = '''[a-z0-9]{20}''' # TODO needs a limiter
+[[rules.extractors]]
+id = "finicity-api-token"
+description = "Finicity API token"
+mustContain = "finicity"
+regex = '''[a-f0-9]{32}'''
+[[rules.extractors]]
+id = "gocardless-api-token"
+description = "GoCardless API token"
+mustContain = "gocardless"
+regex = '''live_(?i)[a-z0-9-_=]{40}'''
 
 # global allow list
 [allowlist]

@@ -62,7 +62,7 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 
 		start := time.Now()
 		matchIndices := r.Regex.FindAllIndex(b, -1)
-		Timings.Add(r.Regex.String(), time.Now().Sub(start))
+		timings.Add(r.RuleID, time.Since(start))
 		for _, m := range matchIndices {
 			location := getLocation(linePairs, m[0], m[1])
 			secret := strings.Trim(string(b[m[0]:m[1]]), "\n")
@@ -109,6 +109,8 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 			for _, extractor := range r.Extractors {
 				if extractor.MustContain != "" {
 					if strings.Contains(strings.ToLower(f.Match),
+						// TODO this should probabaly be a regex instead of
+						// a string
 						strings.ToLower(extractor.MustContain)) {
 						if extractor.Regex.MatchString(f.Secret) {
 							fmt.Println(f)
