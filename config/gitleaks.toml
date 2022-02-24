@@ -268,7 +268,7 @@ regex = '''tfp_[a-z0-9\-_\.=]{59}'''
 id = "generic-api-key"
 description = "Generic API Key"
 # regex = '''(?i)([a-z0-9\-_]{0,25}(key|api|token|secret|password)[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([0-9a-zA-Z\-_=]{8,64})['\"]'''
-regex = '''(?i)(?:[a-z0-9\-_.]{0,25})(?:key|api|token|secret|password)(?:[0-9a-zA-Z\-_\s.]{0,20})(?:=|>|:=|\|\|:|<=|=>|:)(?:'|\"|\n|\r|\s|=){0,5}([0-9a-zA-Z\-_=]{14,64})['|\"|\n|\r|\s]'''
+regex = '''(?i)(?:[a-z0-9\-_.]{0,25})(?:key|api|token|secret|client|password|pat)(?:[0-9a-zA-Z\-_\s.]{0,20})(?:=|>|:=|\|\|:|<=|=>|:)(?:'|\"|\n|\r|\s|=){0,5}([0-9a-zA-Z\-_.=]{14,150})['|\"|\n|\r|\s]'''
 entropy = 3.7
 secretGroup = 1
     # extractors will check the regex captured by the parent's "secretGroup"
@@ -356,8 +356,7 @@ secretGroup = 1
     [[rules.extractors]]
     id = "discord-client-id"
     description = "Discord client ID"
-    regex = '''[0-9]{18}''' # TODO needs a limiter
-    regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([0-9]{18})['|\"|\n|\r|\s]'''
+    regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9=_\-]{32})['|\"|\n|\r|\s]'''
     secretGroup=1
     [[rules.extractors]]
     id = "discord-client-secret"
