@@ -105,19 +105,40 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 				findings = append(findings, f)
 			}
 
-			// check if rule has extractor and augment finding if match
+			// check if rule has extractor and update finding if match
 			for _, extractor := range r.Extractors {
-				if extractor.MustContain != "" {
-					if strings.Contains(strings.ToLower(f.Match),
-						// TODO this should probabaly be a regex instead of
-						// a string
-						strings.ToLower(extractor.MustContain)) {
-						if extractor.Regex.MatchString(f.Secret) {
-							fmt.Println(f)
-							f.RuleID = extractor.ID
+				if extractor.Regex != nil {
+					if extractor.SecretGroup != 0 {
+						groups := extractor.Regex.FindStringSubmatch(f.Match)
+						if len(groups) < extractor.SecretGroup || len(groups) == 0 {
+							// Config validation should prevent this
+							continue
+
+						}
+						f.Secret = groups[extractor.SecretGroup]
+						f.RuleID = extractor.ID
+						f.Description = extractor.Description
+						fmt.Println(f)
+					} else {
+						// no secret group specific, check if there is a match
+						secret := extractor.Regex.FindString(f.Match)
+						if secret != "" {
+							f.Secret = secret
 						}
 					}
 				}
+
+				// if extractor.MustContain != "" {
+				// 	if strings.Contains(strings.ToLower(f.Match),
+				// 		// TODO this should probabaly be a regex instead of
+				// 		// a string
+				// 		strings.ToLower(extractor.MustContain)) {
+				// 		if extractor.Regex.MatchString(f.Secret) {
+				// 			fmt.Println(f)
+				// 			f.RuleID = extractor.ID
+				// 		}
+				// 	}
+				// }
 			}
 		}
 	}

@@ -27,6 +27,7 @@ type ViperConfig struct {
 			Description string
 			Regex       string
 			MustContain string
+			SecretGroup int
 		}
 
 		Allowlist struct {
@@ -86,6 +87,7 @@ func (vc *ViperConfig) Translate() (Config, error) {
 				Description: e.Description,
 				ID:          e.ID,
 				MustContain: e.MustContain,
+				SecretGroup: e.SecretGroup,
 			})
 		}
 		r := &Rule{

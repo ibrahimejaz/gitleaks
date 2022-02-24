@@ -9,6 +9,7 @@ type Extractor struct {
 	ID          string
 	Description string
 	Regex       *regexp.Regexp
+	SecretGroup int
 	MustContain string
 }
 
