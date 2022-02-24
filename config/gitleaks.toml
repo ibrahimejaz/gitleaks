@@ -271,208 +271,208 @@ description = "Generic API Key"
 regex = '''(?i)(?:[a-z0-9\-_.]{0,25})(?:key|api|token|secret|client|password|pat)(?:[0-9a-zA-Z\-_\s.]{0,20})(?:=|>|:=|\|\|:|<=|=>|:)(?:'|\"|\n|\r|\s|=){0,5}([0-9a-zA-Z\-_.=]{14,150})['|\"|\n|\r|\s]'''
 entropy = 3.7
 secretGroup = 1
-    # extractors will check the regex captured by the parent's "secretGroup"
-    # Most extractors are API Keys
-    [[rules.extractors]]
-    id = "linkedin-client-id"
-    description = "Linkedin Client token"
-    mustContain = "linkedin"
-    regex = '''[a-z0-9]{14}'''
-    [[rules.extractors]]
-    id = "linkedin-client-secret"
-    description = "Linkedin Client Secret"
-    mustContain = "linkedin"
-    regex = '''[a-z0-9]{16}'''
-    [[rules.extractors]]
-    id = "heroku-api-key"
-    description = "Heroku API Key"
-    mustContain = "heroku"
-    regex = ''' [0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}'''
-    [[rules.extractors]]
-    id = "facebook-token"
-    description = "Facebook token"
-    mustContain = "facebook"
-    regex = '''[a-f0-9]{32}'''
-    [[rules.extractors]]
-    id = "twitter-token"
-    description = "Twitter token"
-    mustContain = "twitter"
-    regex = '''[a-f0-9]{35,44}'''
-    [[rules.extractors]]
-    id = "adobe-client-id"
-    description = "Adobe Client ID (Oauth Web)"
-    mustContain = "adobe"
-    regex = '''[a-f0-9]{32}'''
-    [[rules.extractors]]
-    id = "alibaba-secret-key"
-    description = "Alibaba Secret Key"
-    mustContain = "alibaba"
-    regex = '''[a-z0-9]{30}'''
-    [[rules.extractors]]
-    id = "asana-client-id"
-    description = "Asana Client ID"
-    mustContain = "asana"
-    regex = '''[0-9]{16}'''
-    [[rules.extractors]]
-    id = "asana-client-secret"
-    description = "Asana Client Secret"
-    mustContain = "asana"
-    regex = '''[a-z0-9]{32}'''
-    [[rules.extractors]]
-    id = "atlassian-api-token"
-    description = "Atlassian API token"
-    mustContain = "atlassian"
-    regex = '''[a-z0-9]{24}'''
-    [[rules.extractors]]
-    id = "bitbucket-client-id"
-    description = "Bitbucket client ID"
-    mustContain = "bitbucket"
-    regex = '''[a-z0-9]{32}['\"]''' # TODO needs a limiter to prevent collison with client-secret
-    [[rules.extractors]]
-    id = "bitbucket-client-secret"
-    description = "Bitbucket client secret"
-    mustContain = "bitbucket"
-    regex = '''[a-z0-9_\-]{64}'''
-    [[rules.extractors]]
-    id = "beamer-api-token"
-    description = "Beamer API token"
-    mustContain = "beamer"
-    regex = '''b_[a-z0-9=_\-]{44}'''
-    [[rules.extractors]]
-    id = "contentful-api-token"
-    description = "Contentful delivery API token"
-    mustContain = "contentful"
-    regex = '''[a-z0-9\-=_]{43}'''
-    [[rules.extractors]]
-    id = "databricks-api-token"
-    description = "Databricks API token"
-    mustContain = "databricks"
-    regex = '''dapi[a-h0-9]{32}''' # TODO this _could_ be a standalone rule?
+    # # extractors will check the regex captured by the parent's "secretGroup"
+    # # Most extractors are API Keys
+    # [[rules.extractors]]
+    # id = "linkedin-client-id"
+    # description = "Linkedin Client token"
+    # mustContain = "linkedin"
+    # regex = '''[a-z0-9]{14}'''
+    # [[rules.extractors]]
+    # id = "linkedin-client-secret"
+    # description = "Linkedin Client Secret"
+    # mustContain = "linkedin"
+    # regex = '''[a-z0-9]{16}'''
+    # [[rules.extractors]]
+    # id = "heroku-api-key"
+    # description = "Heroku API Key"
+    # mustContain = "heroku"
+    # regex = ''' [0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}'''
+    # [[rules.extractors]]
+    # id = "facebook-token"
+    # description = "Facebook token"
+    # mustContain = "facebook"
+    # regex = '''[a-f0-9]{32}'''
+    # [[rules.extractors]]
+    # id = "twitter-token"
+    # description = "Twitter token"
+    # mustContain = "twitter"
+    # regex = '''[a-f0-9]{35,44}'''
+    # [[rules.extractors]]
+    # id = "adobe-client-id"
+    # description = "Adobe Client ID (Oauth Web)"
+    # mustContain = "adobe"
+    # regex = '''[a-f0-9]{32}'''
+    # [[rules.extractors]]
+    # id = "alibaba-secret-key"
+    # description = "Alibaba Secret Key"
+    # mustContain = "alibaba"
+    # regex = '''[a-z0-9]{30}'''
+    # [[rules.extractors]]
+    # id = "asana-client-id"
+    # description = "Asana Client ID"
+    # mustContain = "asana"
+    # regex = '''[0-9]{16}'''
+    # [[rules.extractors]]
+    # id = "asana-client-secret"
+    # description = "Asana Client Secret"
+    # mustContain = "asana"
+    # regex = '''[a-z0-9]{32}'''
+    # [[rules.extractors]]
+    # id = "atlassian-api-token"
+    # description = "Atlassian API token"
+    # mustContain = "atlassian"
+    # regex = '''[a-z0-9]{24}'''
+    # [[rules.extractors]]
+    # id = "bitbucket-client-id"
+    # description = "Bitbucket client ID"
+    # mustContain = "bitbucket"
+    # regex = '''[a-z0-9]{32}['\"]''' # TODO needs a limiter to prevent collison with client-secret
+    # [[rules.extractors]]
+    # id = "bitbucket-client-secret"
+    # description = "Bitbucket client secret"
+    # mustContain = "bitbucket"
+    # regex = '''[a-z0-9_\-]{64}'''
+    # [[rules.extractors]]
+    # id = "beamer-api-token"
+    # description = "Beamer API token"
+    # mustContain = "beamer"
+    # regex = '''b_[a-z0-9=_\-]{44}'''
+    # [[rules.extractors]]
+    # id = "contentful-api-token"
+    # description = "Contentful delivery API token"
+    # mustContain = "contentful"
+    # regex = '''[a-z0-9\-=_]{43}'''
+    # [[rules.extractors]]
+    # id = "databricks-api-token"
+    # description = "Databricks API token"
+    # mustContain = "databricks"
+    # regex = '''dapi[a-h0-9]{32}''' # TODO this _could_ be a standalone rule?
     [[rules.extractors]]
     id = "discord-api-token"
     description = "Discord API key"
-    mustContain = "discord"
-    regex = '''[a-h0-9]{64}'''
+    regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([a-h0-9]{64})['|\"|\n|\r|\s]'''
+    secretGroup=1
     [[rules.extractors]]
     id = "discord-client-id"
     description = "Discord client ID"
-    regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9=_\-]{32})['|\"|\n|\r|\s]'''
+    regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([0-9]{18})['|\"|\n|\r|\s]'''
     secretGroup=1
     [[rules.extractors]]
     id = "discord-client-secret"
     description = "Discord client secret"
     regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9=_\-]{32})['|\"|\n|\r|\s]'''
     secretGroup=1
-    [[rules.extractors]]
-    id = "dropbox-api-secret"
-    description = "Dropbox API secret/key"
-    mustContain = "dropbox"
-    regex = '''[a-z0-9]{15}'''
-    [[rules.extractors]]
-    id = "dropbox-short-lived-api-token"
-    description = "Dropbox short lived API token"
-    mustContain = "dropbox"
-    regex = '''sl\.[a-z0-9\-=_]{135}''' # TODO this is an annoying one... might be better to leave as its own
-    [[rules.extractors]]
-    id = "dropbox-long-lived-api-token"
-    description = "Dropbox long lived API token"
-    mustContain = "dropbox"
-    regex = '''[a-z0-9]{11}(AAAAAAAAAA)[a-z0-9\-_=]{43}''' # TODO make check this
-    [[rules.extractors]]
-    id = "fastly-api-token"
-    description = "Fastly API token"
-    mustContain = "fastly"
-    regex = '''[a-z0-9\-=_]{32}'''
-    [[rules.extractors]]
-    id = "finicity-client-secret"
-    description = "Finicity client secret"
-    mustContain = "finicity"
-    regex = '''[a-z0-9]{20}''' # TODO needs a limiter
-    [[rules.extractors]]
-    id = "finicity-api-token"
-    description = "Finicity API token"
-    mustContain = "finicity"
-    regex = '''[a-f0-9]{32}'''
-    [[rules.extractors]]
-    id = "gocardless-api-token"
-    description = "GoCardless API token"
-    mustContain = "gocardless"
-    regex = '''live_(?i)[a-z0-9-_=]{40}'''
-    [[rules.extractors]]
-    id = "hubspot-api-token"
-    description = "Hubspot API token"
-    mustContain = "hubspot"
-    regex = '''[a-h0-9]{8}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{12}'''
-    [[rules.extractors]]
-    id = "intercom-api-token"
-    description = "Intercom API token"
-    mustContain = "intercom"
-    regex = '''[a-z0-9=_]{60}'''
-    [[rules.extractors]]
-    id = "intercom-client-secret"
-    description = "Intercom client secret/ID"
-    mustContain = "intercom"
-    regex = '''[a-h0-9]{8}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{12}'''
-    [[rules.extractors]]
-    id = "ionic-api-token"
-    description = "Ionic API token"
-    mustContain = "ion"
-    regex = '''ion_[a-z0-9]{42}'''
-    [[rules.extractors]]
-    id = "linear-client-secret"
-    description = "Linear client secret/ID"
-    mustContain = "linear"
-    regex = '''[a-f0-9]{32}'''
-    [[rules.extractors]]
-    id = "lob-api-key"
-    description = "Lob API Key"
-    mustContain = "lob"
-    regex = '''(live|test)_[a-f0-9]{35}''' # TODO validate this
-    [[rules.extractors]]
-    id = "lob-pub-api-key"
-    description = "Lob Publishable API Key"
-    mustContain = "lob"
-    regex = '''(test|live)_pub_[a-f0-9]{31}''' # TODO combine the key above with this
-    [[rules.extractors]]
-    id = "mailchimp-api-key"
-    description = "Mailchimp API key"
-    mustContain = "mailchimp"
-    regex = '''[a-f0-9]{32}-us20'''
-    [[rules.extractors]]
-    id = "mailgun-private-api-token"
-    description = "Mailgun private API token"
-    mustContain = "mailgun"
-    regex = '''key-[a-f0-9]{32}'''
-    [[rules.extractors]]
-    id = "mailgun-pub-key"
-    description = "Mailgun public validation key"
-    mustContain = "mailgun"
-    regex = '''pubkey-[a-f0-9]{32}'''
-    [[rules.extractors]]
-    id = "mailgun-signing-key"
-    description = "Mailgun webhook signing key"
-    mustContain = "mailgun"
-    regex = '''[a-h0-9]{32}-[a-h0-9]{8}-[a-h0-9]{8}'''
-    [[rules.extractors]]
-    id = "messagebird-api-token"
-    description = "MessageBird API token"
-    mustContain = "messagebird"
-    regex = '''[a-z0-9]{25}'''
-    [[rules.extractors]]
-    id = "messagebird-client-id"
-    description = "MessageBird API client ID"
-    mustContain = "messagebird"
-    regex = '''[a-h0-9]{8}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{12}'''
-    [[rules.extractors]]
-    id = "new-relic-user-api-id"
-    description = "New Relic user API ID"
-    mustContain = "newrelic"
-    regex = '''[A-Z0-9]{64}'''
-    [[rules.extractors]]
-    id = "Hashicorp Vault service token"
-    description = "Hashicorp Vault service token"
-    mustContain = "hashicorp"
-    regex = '''s\.[0-9a-zA-Z]{24}'''
+    # [[rules.extractors]]
+    # id = "dropbox-api-secret"
+    # description = "Dropbox API secret/key"
+    # mustContain = "dropbox"
+    # regex = '''[a-z0-9]{15}'''
+    # [[rules.extractors]]
+    # id = "dropbox-short-lived-api-token"
+    # description = "Dropbox short lived API token"
+    # mustContain = "dropbox"
+    # regex = '''sl\.[a-z0-9\-=_]{135}''' # TODO this is an annoying one... might be better to leave as its own
+    # [[rules.extractors]]
+    # id = "dropbox-long-lived-api-token"
+    # description = "Dropbox long lived API token"
+    # mustContain = "dropbox"
+    # regex = '''[a-z0-9]{11}(AAAAAAAAAA)[a-z0-9\-_=]{43}''' # TODO make check this
+    # [[rules.extractors]]
+    # id = "fastly-api-token"
+    # description = "Fastly API token"
+    # mustContain = "fastly"
+    # regex = '''[a-z0-9\-=_]{32}'''
+    # [[rules.extractors]]
+    # id = "finicity-client-secret"
+    # description = "Finicity client secret"
+    # mustContain = "finicity"
+    # regex = '''[a-z0-9]{20}''' # TODO needs a limiter
+    # [[rules.extractors]]
+    # id = "finicity-api-token"
+    # description = "Finicity API token"
+    # mustContain = "finicity"
+    # regex = '''[a-f0-9]{32}'''
+    # [[rules.extractors]]
+    # id = "gocardless-api-token"
+    # description = "GoCardless API token"
+    # mustContain = "gocardless"
+    # regex = '''live_(?i)[a-z0-9-_=]{40}'''
+    # [[rules.extractors]]
+    # id = "hubspot-api-token"
+    # description = "Hubspot API token"
+    # mustContain = "hubspot"
+    # regex = '''[a-h0-9]{8}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{12}'''
+    # [[rules.extractors]]
+    # id = "intercom-api-token"
+    # description = "Intercom API token"
+    # mustContain = "intercom"
+    # regex = '''[a-z0-9=_]{60}'''
+    # [[rules.extractors]]
+    # id = "intercom-client-secret"
+    # description = "Intercom client secret/ID"
+    # mustContain = "intercom"
+    # regex = '''[a-h0-9]{8}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{12}'''
+    # [[rules.extractors]]
+    # id = "ionic-api-token"
+    # description = "Ionic API token"
+    # mustContain = "ion"
+    # regex = '''ion_[a-z0-9]{42}'''
+    # [[rules.extractors]]
+    # id = "linear-client-secret"
+    # description = "Linear client secret/ID"
+    # mustContain = "linear"
+    # regex = '''[a-f0-9]{32}'''
+    # [[rules.extractors]]
+    # id = "lob-api-key"
+    # description = "Lob API Key"
+    # mustContain = "lob"
+    # regex = '''(live|test)_[a-f0-9]{35}''' # TODO validate this
+    # [[rules.extractors]]
+    # id = "lob-pub-api-key"
+    # description = "Lob Publishable API Key"
+    # mustContain = "lob"
+    # regex = '''(test|live)_pub_[a-f0-9]{31}''' # TODO combine the key above with this
+    # [[rules.extractors]]
+    # id = "mailchimp-api-key"
+    # description = "Mailchimp API key"
+    # mustContain = "mailchimp"
+    # regex = '''[a-f0-9]{32}-us20'''
+    # [[rules.extractors]]
+    # id = "mailgun-private-api-token"
+    # description = "Mailgun private API token"
+    # mustContain = "mailgun"
+    # regex = '''key-[a-f0-9]{32}'''
+    # [[rules.extractors]]
+    # id = "mailgun-pub-key"
+    # description = "Mailgun public validation key"
+    # mustContain = "mailgun"
+    # regex = '''pubkey-[a-f0-9]{32}'''
+    # [[rules.extractors]]
+    # id = "mailgun-signing-key"
+    # description = "Mailgun webhook signing key"
+    # mustContain = "mailgun"
+    # regex = '''[a-h0-9]{32}-[a-h0-9]{8}-[a-h0-9]{8}'''
+    # [[rules.extractors]]
+    # id = "messagebird-api-token"
+    # description = "MessageBird API token"
+    # mustContain = "messagebird"
+    # regex = '''[a-z0-9]{25}'''
+    # [[rules.extractors]]
+    # id = "messagebird-client-id"
+    # description = "MessageBird API client ID"
+    # mustContain = "messagebird"
+    # regex = '''[a-h0-9]{8}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{4}-[a-h0-9]{12}'''
+    # [[rules.extractors]]
+    # id = "new-relic-user-api-id"
+    # description = "New Relic user API ID"
+    # mustContain = "newrelic"
+    # regex = '''[A-Z0-9]{64}'''
+    # [[rules.extractors]]
+    # id = "Hashicorp Vault service token"
+    # description = "Hashicorp Vault service token"
+    # mustContain = "hashicorp"
+    # regex = '''s\.[0-9a-zA-Z]{24}'''
 
 # global allow list
 [allowlist]

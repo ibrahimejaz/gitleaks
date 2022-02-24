@@ -113,33 +113,23 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 						if len(groups) < extractor.SecretGroup || len(groups) == 0 {
 							// Config validation should prevent this
 							continue
-
 						}
 						f.Secret = groups[extractor.SecretGroup]
 						f.RuleID = extractor.ID
 						f.Description = extractor.Description
 						fmt.Println(f)
+						goto BREAKEXTRACTOR
 					} else {
 						// no secret group specific, check if there is a match
 						secret := extractor.Regex.FindString(f.Match)
 						if secret != "" {
 							f.Secret = secret
+							goto BREAKEXTRACTOR
 						}
 					}
 				}
-
-				// if extractor.MustContain != "" {
-				// 	if strings.Contains(strings.ToLower(f.Match),
-				// 		// TODO this should probabaly be a regex instead of
-				// 		// a string
-				// 		strings.ToLower(extractor.MustContain)) {
-				// 		if extractor.Regex.MatchString(f.Secret) {
-				// 			fmt.Println(f)
-				// 			f.RuleID = extractor.ID
-				// 		}
-				// 	}
-				// }
 			}
+		BREAKEXTRACTOR:
 		}
 	}
 
