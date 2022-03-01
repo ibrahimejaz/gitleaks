@@ -107,25 +107,22 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 
 			// check if rule has extractor and update finding if match
 			for _, extractor := range r.Extractors {
-				if extractor.Regex != nil {
-					if extractor.SecretGroup != 0 {
-						groups := extractor.Regex.FindStringSubmatch(f.Match)
-						if len(groups) < extractor.SecretGroup || len(groups) == 0 {
-							// Config validation should prevent this
-							continue
-						}
-						f.Secret = groups[extractor.SecretGroup]
-						f.RuleID = extractor.ID
-						f.Description = extractor.Description
-						fmt.Println(f)
+				if extractor.Regex != nil && extractor.SecretGroup != 0 {
+					groups := extractor.Regex.FindStringSubmatch(f.Match)
+					if len(groups) < extractor.SecretGroup || len(groups) == 0 {
+						continue
+					}
+					f.Secret = groups[extractor.SecretGroup]
+					f.RuleID = extractor.ID
+					f.Description = extractor.Description
+					fmt.Println(f)
+					goto BREAKEXTRACTOR
+				} else if extractor.Regex != nil {
+					// no secret group specific, check if there is a match
+					secret := extractor.Regex.FindString(f.Match)
+					if secret != "" {
+						f.Secret = secret
 						goto BREAKEXTRACTOR
-					} else {
-						// no secret group specific, check if there is a match
-						secret := extractor.Regex.FindString(f.Match)
-						if secret != "" {
-							f.Secret = secret
-							goto BREAKEXTRACTOR
-						}
 					}
 				}
 			}
