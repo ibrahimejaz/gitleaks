@@ -120,52 +120,52 @@ regex = '''AGE-SECRET-KEY-1[QPZRY9X8GF2TVDW0S3JN54KHCE6MUA7L]{58}'''
 [[rules]]
 id = "adobe-client-secret"
 description = "Adobe Client Secret"
-regex = '''(p8e-)(?i)[a-z0-9]{32}'''
+regex = '''(p8e-)[a-z0-9]{32}'''
 
 [[rules]]
 id = "alibaba-access-key-id"
 description = "Alibaba AccessKey ID"
-regex = '''(LTAI)(?i)[a-z0-9]{20}''' # TODO needs a limiter
+regex = '''(LTAI)[a-z0-9]{20}''' # TODO needs a limiter
 
 [[rules]]
 id = "clojars-api-token"
 description = "Clojars API token"
-regex = '''(CLOJARS_)(?i)[a-z0-9]{60}'''
+regex = '''(CLOJARS_)[a-z0-9]{60}'''
 
 [[rules]]
 id = "doppler-api-token"
 description = "Doppler API token"
-regex = '''(dp\.pt\.)(?i)[a-z0-9]{43}'''
+regex = '''(dp\.pt\.)[a-z0-9]{43}'''
 
 [[rules]]
 id = "duffel-api-token"
 description = "Duffel API token"
-regex = '''duffel_(test|live)_(?i)[a-z0-9_-]{43}'''
+regex = '''duffel_(test|live)_[a-z0-9_-]{43}'''
 
 [[rules]]
 id = "dynatrace-api-token"
 description = "Dynatrace API token"
-regex = '''dt0c01\.(?i)[a-z0-9]{24}\.[a-z0-9]{64}'''
+regex = '''dt0c01\.[a-z0-9]{24}\.[a-z0-9]{64}'''
 
 [[rules]]
 id = "easypost-api-token"
 description = "EasyPost API token"
-regex = '''EZ(A|T)K(?i)[a-z0-9]{54}'''
+regex = '''EZ(A|T)K[a-z0-9]{54}'''
 
 [[rules]]
 id = "easypost-test-api-token"
 description = "EasyPost test API token"
-regex = '''EZTK(?i)[a-z0-9]{54}'''
+regex = '''EZTK[a-z0-9]{54}'''
 
 [[rules]]
 id = "flutterweave-public-key"
 description = "Flutterweave public key"
-regex = '''FLWPUBK_TEST-(?i)[a-h0-9]{32}-X'''
+regex = '''FLWPUBK_TEST-[a-h0-9]{32}-X'''
 
 [[rules]]
 id = "flutterweave-secret-key"
 description = "Flutterweave secret key"
-regex = '''FLWSECK_TEST-(?i)[a-h0-9]{32}-X'''
+regex = '''FLWSECK_TEST-[a-h0-9]{32}-X'''
 
 [[rules]]
 id = "flutterweave-enc-key"
@@ -175,29 +175,29 @@ regex = '''FLWSECK_TEST[a-h0-9]{12}'''
 [[rules]]
 id = "frameio-api-token"
 description = "Frame.io API token"
-regex = '''fio-u-(?i)[a-z0-9-_=]{64}'''
+regex = '''fio-u-[a-z0-9-_=]{64}'''
 #
 # [[rules]]
 # id = "grafana-api-token"
 # description = "Grafana API token"
-# regex = '''eyJrIjoi(?i)[a-z0-9-_=]{72,92}''' # TODO this is a generic jwt token, should be deleted
+# regex = '''eyJrIjoi[a-z0-9-_=]{72,92}''' # TODO this is a generic jwt token, should be deleted
 
 [[rules]]
 id = "hashicorp-tf-api-token"
 description = "Hashicorp Terraform user/org API token"
-regex = '''['\"](?i)[a-z0-9]{14}\.atlasv1\.[a-z0-9-_=]{60,70}['\"]'''
+regex = '''['\"][a-z0-9]{14}\.atlasv1\.[a-z0-9-_=]{60,70}['\"]'''
 #
 #
 [[rules]]
 id = "linear-api-token"
 description = "Linear API token"
-regex = '''lin_api_(?i)[a-z0-9]{40}'''
+regex = '''lin_api_[a-z0-9]{40}'''
 #
 [[rules]]
 # v slow
 id = "mapbox-api-token"
 description = "Mapbox API token"
-regex = '''(?i)(pk\.[a-z0-9]{60}\.[a-z0-9]{22})'''
+regex = '''(pk\.[a-z0-9]{60}\.[a-z0-9]{22})'''
 #
 [[rules]]
 id = "new-relic-user-api-key"
@@ -215,22 +215,22 @@ regex = '''NRJS-[a-f0-9]{19}'''
 id = "npm-access-token"
 description = "npm access token"
 mustContain = "npm"
-regex = '''npm_(?i)[a-z0-9]{36}'''
+regex = '''npm_[a-z0-9]{36}'''
 
 [[rules]]
 id = "planetscale-password"
 description = "Planetscale password"
-regex = '''pscale_pw_(?i)[a-z0-9\-_\.]{43}'''
+regex = '''pscale_pw_[a-z0-9\-_\.]{43}'''
 
 [[rules]]
 id = "planetscale-api-token"
 description = "Planetscale API token"
-regex = '''pscale_tkn_(?i)[a-z0-9\-_\.]{43}'''
+regex = '''pscale_tkn_[a-z0-9\-_\.]{43}'''
 
 [[rules]]
 id = "postman-api-token"
 description = "Postman API token"
-regex = '''PMAK-(?i)[a-f0-9]{24}\-[a-f0-9]{34}'''
+regex = '''PMAK-[a-f0-9]{24}\-[a-f0-9]{34}'''
 
 [[rules]]
 id = "pulumi-api-token"
@@ -245,12 +245,12 @@ regex = '''rubygems_[a-f0-9]{48}'''
 [[rules]]
 id = "sendgrid-api-token"
 description = "Sendgrid API token"
-regex = '''SG\.(?i)[a-z0-9_\-\.]{66}'''
+regex = '''SG\.[a-z0-9_\-\.]{66}'''
 
 [[rules]]
 id = "sendinblue-api-token"
 description = "Sendinblue API token"
-regex = '''xkeysib-[a-f0-9]{64}\-(?i)[a-z0-9]{16}'''
+regex = '''xkeysib-[a-f0-9]{64}\-[a-z0-9]{16}'''
 
 [[rules]]
 id = "shippo-api-token"
@@ -267,12 +267,9 @@ regex = '''tfp_[a-z0-9\-_\.=]{59}'''
 # extractors are used to determine what _kind_ of api keys were captured.
 id = "generic-api-key"
 description = "Generic API Key"
-# regex = '''(?i)([a-z0-9\-_]{0,25}(key|api|token|secret|password)[a-z0-9_ .\-,]{0,25})(=|>|:=|\|\|:|<=|=>|:).{0,5}['\"]([0-9a-zA-Z\-_=]{8,64})['\"]'''
-regex = '''(?i)(?:[a-z0-9\-_.]{0,25})(?:key|api|token|secret|client|password|pat)(?:[0-9a-zA-Z\-_\s.]{0,20})(?:=|>|:=|\|\|:|<=|=>|:)(?:'|\"|\n|\r|\s|=){0,5}([0-9a-zA-Z\-_.=]{14,150})['|\"|\n|\r|\s]'''
+regex = '''(?:'|"){0,1}(?:[a-z0-9\-_.]{0,25})(?:key|api|token|secret|client|password|pat)(?:[0-9a-z\-_\s.]{0,20})(?:'|"){0,1}(?:=|>|:=|\|\|:|<=|=>|:)(?:'|\"|\s|=){0,5}([0-9a-z\-_.=]{14,150})['|\"|\n|\r|\s]'''
 entropy = 3.7
 secretGroup = 1
-    # # extractors will check the regex captured by the parent's "secretGroup"
-    # # Most extractors are API Keys
     # [[rules.extractors]]
     # id = "linkedin-client-id"
     # description = "Linkedin Client token"
@@ -351,17 +348,17 @@ secretGroup = 1
     [[rules.extractors]]
     id = "discord-api-token"
     description = "Discord API key"
-    regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([a-h0-9]{64})['|\"|\n|\r|\s]'''
+    regex = '''discord.+['|\"|\n|\r|\s|=|:=|:]([a-h0-9]{64})['|\"|\n|\r|\s]'''
     secretGroup=1
     [[rules.extractors]]
     id = "discord-client-id"
     description = "Discord client ID"
-    regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([0-9]{18})['|\"|\n|\r|\s]'''
+    regex = '''discord.+['|\"|\n|\r|\s|=|:=|:]([0-9]{18})['|\"|\n|\r|\s]'''
     secretGroup=1
     [[rules.extractors]]
     id = "discord-client-secret"
     description = "Discord client secret"
-    regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9=_\-]{32})['|\"|\n|\r|\s]'''
+    regex = '''discord.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9=_\-]{32})['|\"|\n|\r|\s]'''
     secretGroup=1
     # [[rules.extractors]]
     # id = "dropbox-api-secret"
@@ -397,7 +394,7 @@ secretGroup = 1
     # id = "gocardless-api-token"
     # description = "GoCardless API token"
     # mustContain = "gocardless"
-    # regex = '''live_(?i)[a-z0-9-_=]{40}'''
+    # regex = '''live_[a-z0-9-_=]{40}'''
     # [[rules.extractors]]
     # id = "hubspot-api-token"
     # description = "Hubspot API token"
