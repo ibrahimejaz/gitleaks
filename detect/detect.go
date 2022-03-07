@@ -1,6 +1,7 @@
 package detect
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"regexp"
@@ -11,12 +12,18 @@ import (
 	"github.com/zricethezav/gitleaks/v8/report"
 )
 
+var newlineRe *regexp.Regexp
+
+func init() {
+	newlineRe = regexp.MustCompile("\n")
+}
+
 type Options struct {
 	Verbose bool
 	Redact  bool
 }
 
-const MAXGOROUTINES = 4
+const MAXGOROUTINES = 40
 
 func DetectFindings(cfg config.Config, b []byte, filePath string, commit string) []report.Finding {
 	var findings []report.Finding
@@ -26,10 +33,11 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 		return findings
 	}
 
-	linePairs := regexp.MustCompile("\n").FindAllIndex(b, -1)
+	b = bytes.ToLower(b)
+	linePairs := newlineRe.FindAllIndex(b, -1)
 
+NEXTRULE:
 	for _, r := range cfg.Rules {
-		pathSkip := false
 		if r.Allowlist.CommitAllowed(commit) {
 			continue
 		}
@@ -50,14 +58,9 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 						Tags:        r.Tags,
 					}
 					findings = append(findings, f)
-					pathSkip = true
+					continue NEXTRULE
 				}
-			} else {
-				pathSkip = true
 			}
-		}
-		if pathSkip {
-			continue
 		}
 
 		start := time.Now()
@@ -99,10 +102,9 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 				include, entropy := r.IncludeEntropy(secret)
 				if include {
 					f.Entropy = float32(entropy)
-					findings = append(findings, f)
+				} else {
+					goto NEXTMATCH
 				}
-			} else {
-				findings = append(findings, f)
 			}
 
 			// check if rule has extractor and update finding if match
@@ -116,20 +118,21 @@ func DetectFindings(cfg config.Config, b []byte, filePath string, commit string)
 					f.RuleID = extractor.ID
 					f.Description = extractor.Description
 					fmt.Println(f)
-					goto BREAKEXTRACTOR
+					goto APPENDFINDING
 				} else if extractor.Regex != nil {
 					// no secret group specific, check if there is a match
 					secret := extractor.Regex.FindString(f.Match)
 					if secret != "" {
 						f.Secret = secret
-						goto BREAKEXTRACTOR
+						goto APPENDFINDING
 					}
 				}
 			}
-		BREAKEXTRACTOR:
+		APPENDFINDING:
+			findings = append(findings, f)
+		NEXTMATCH:
 		}
 	}
-
 	return findings
 }
 

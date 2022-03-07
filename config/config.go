@@ -86,7 +86,6 @@ func (vc *ViperConfig) Translate() (Config, error) {
 				Regex:       extractorRegex,
 				Description: e.Description,
 				ID:          e.ID,
-				MustContain: e.MustContain,
 				SecretGroup: e.SecretGroup,
 			})
 		}
