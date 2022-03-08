@@ -51,16 +51,15 @@ func runDetect(cmd *cobra.Command, args []string) {
 	if cfg.Path == "" {
 		cfg.Path = filepath.Join(source, ".gitleaks.toml")
 	}
+
 	start := time.Now()
+	detector := detect.NewDetector(cfg, verbose, redact)
 
 	if noGit {
 		if logOpts != "" {
 			log.Fatal().Err(err).Msg("--log-opts cannot be used with --no-git")
 		}
-		findings, err = detect.FromFiles(source, cfg, detect.Options{
-			Verbose: verbose,
-			Redact:  redact,
-		})
+		findings, err = detector.FromFiles(source)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Failed to scan files")
 		}
@@ -70,7 +69,7 @@ func runDetect(cmd *cobra.Command, args []string) {
 			log.Fatal().Err(err).Msg("Failed to get git log")
 		}
 
-		findings = detect.FromGit(files, cfg, detect.Options{Verbose: verbose, Redact: redact})
+		findings = detector.FromGit(files)
 	}
 
 	if len(findings) != 0 {

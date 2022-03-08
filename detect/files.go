@@ -9,13 +9,12 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/zricethezav/gitleaks/v8/config"
 	"github.com/zricethezav/gitleaks/v8/report"
 )
 
 // FromFiles opens the directory or file specified in source and checks each file against the rules
 // from the configuration. If any secrets are found, they are added to the list of findings.
-func FromFiles(source string, cfg config.Config, outputOptions Options) ([]report.Finding, error) {
+func (d *Detector) FromFiles(source string) ([]report.Finding, error) {
 	var (
 		findings []report.Finding
 		mu       sync.Mutex
@@ -23,7 +22,6 @@ func FromFiles(source string, cfg config.Config, outputOptions Options) ([]repor
 	concurrentGoroutines := make(chan struct{}, MAXGOROUTINES)
 	g, _ := errgroup.WithContext(context.Background())
 	paths := make(chan string)
-	detector := NewDetector(cfg, outputOptions.Verbose, outputOptions.Redact)
 	g.Go(func() error {
 		defer close(paths)
 		return filepath.Walk(source,
@@ -47,7 +45,7 @@ func FromFiles(source string, cfg config.Config, outputOptions Options) ([]repor
 			defer func() {
 				<-concurrentGoroutines
 			}()
-			if cfg.Allowlist.PathAllowed(p) || p == cfg.Path {
+			if d.cfg.Allowlist.PathAllowed(p) || p == d.cfg.Path {
 				return nil
 			}
 			b, err := os.ReadFile(p)
@@ -55,16 +53,16 @@ func FromFiles(source string, cfg config.Config, outputOptions Options) ([]repor
 				return err
 			}
 			fmt.Println(p, len(b))
-			fis := detector.Detect(b, p, "")
+			fis := d.Detect(b, p, "")
 			for _, fi := range fis {
 				// need to add 1 since line counting starts at 1
 				fi.StartLine++
 				fi.EndLine++
 
-				if outputOptions.Redact {
+				if d.redact {
 					fi.Redact()
 				}
-				if outputOptions.Verbose {
+				if d.verbose {
 					printFinding(fi)
 				}
 				mu.Lock()

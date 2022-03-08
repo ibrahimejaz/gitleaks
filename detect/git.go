@@ -8,21 +8,18 @@ import (
 
 	"github.com/gitleaks/go-gitdiff/gitdiff"
 	"github.com/rs/zerolog/log"
-	"github.com/zricethezav/gitleaks/v8/config"
 	"github.com/zricethezav/gitleaks/v8/report"
 )
 
 // FromGit accepts a gitdiff.File channel (structure output from `git log -p`) and a configuration
 // struct. Files from the gitdiff.File channel are then checked against each rule in the configuration to
 // check for secrets. If any secrets are found, they are added to the list of findings.
-func FromGit(files <-chan *gitdiff.File, cfg config.Config, outputOptions Options) []report.Finding {
+func (d *Detector) FromGit(files <-chan *gitdiff.File) []report.Finding {
 	var findings []report.Finding
 	mu := sync.Mutex{}
 	wg := sync.WaitGroup{}
 	concurrentGoroutines := make(chan struct{}, MAXGOROUTINES)
 	commitMap := make(map[string]bool)
-
-	detector := NewDetector(cfg, outputOptions.Verbose, outputOptions.Redact)
 
 	for f := range files {
 		// keep track of commits for logging
@@ -50,7 +47,7 @@ func FromGit(files <-chan *gitdiff.File, cfg config.Config, outputOptions Option
 			// Check if commit is allowed
 			if f.PatchHeader != nil {
 				commitSHA = f.PatchHeader.SHA
-				if cfg.Allowlist.CommitAllowed(f.PatchHeader.SHA) {
+				if d.cfg.Allowlist.CommitAllowed(f.PatchHeader.SHA) {
 					return
 				}
 			}
@@ -62,7 +59,7 @@ func FromGit(files <-chan *gitdiff.File, cfg config.Config, outputOptions Option
 					continue
 				}
 
-				for _, fi := range detector.Detect([]byte(tf.Raw(gitdiff.OpAdd)), f.NewName, commitSHA) {
+				for _, fi := range d.Detect([]byte(tf.Raw(gitdiff.OpAdd)), f.NewName, commitSHA) {
 					// don't add to start/end lines if finding is from a file only rule
 					if !strings.HasPrefix(fi.Match, "file detected") {
 						fi.StartLine += int(tf.NewPosition)
@@ -78,11 +75,11 @@ func FromGit(files <-chan *gitdiff.File, cfg config.Config, outputOptions Option
 						fi.Date = f.PatchHeader.AuthorDate.UTC().Format(time.RFC3339)
 					}
 
-					if outputOptions.Redact {
+					if d.redact {
 						fi.Redact()
 					}
 
-					if outputOptions.Verbose {
+					if d.verbose {
 						printFinding(fi)
 					}
 					mu.Lock()

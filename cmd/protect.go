@@ -52,7 +52,7 @@ func runProtect(cmd *cobra.Command, args []string) {
 		log.Fatal().Err(err).Msg("Failed to get git log")
 	}
 
-	findings := detect.FromGit(files, cfg, detect.Options{Verbose: verbose, Redact: redact})
+	findings := detect.NewDetector(cfg, verbose, redact).FromGit(files)
 	if len(findings) != 0 {
 		log.Warn().Msgf("leaks found: %d", len(findings))
 	} else {

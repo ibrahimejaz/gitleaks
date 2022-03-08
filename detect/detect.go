@@ -6,28 +6,11 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/rs/zerolog/log"
+
 	"github.com/zricethezav/gitleaks/v8/config"
 	"github.com/zricethezav/gitleaks/v8/report"
 )
-
-var newlineRe *regexp.Regexp
-
-func init() {
-	newlineRe = regexp.MustCompile("\n")
-}
-
-type Options struct {
-	Verbose bool
-	Redact  bool
-}
-
-const MAXGOROUTINES = 40
-
-type Detector struct {
-	cfg     config.Config
-	verbose bool
-	redact  bool
-}
 
 type DetectFragment struct {
 	text      string
@@ -38,12 +21,85 @@ type DetectFragment struct {
 	finding   *report.Finding
 }
 
+var (
+	newlineRe *regexp.Regexp
+	stopwords = []string{
+		"process",
+		"env",
+		"setting",
+		"getenv",
+		"config",
+		"cfg",
+		"secret",
+		"password",
+		"token",
+	}
+)
+
+const MAXGOROUTINES = 4
+
+func init() {
+	newlineRe = regexp.MustCompile("\n")
+}
+
+// Detector contains a configuration and a set of options for reporting
+type Detector struct {
+	cfg     config.Config
+	verbose bool
+	redact  bool
+}
+
+// NewDetector creates a new detector with the given configuration
 func NewDetector(cfg config.Config, verbose bool, redact bool) *Detector {
 	return &Detector{
 		cfg:     cfg,
 		verbose: verbose,
 		redact:  redact,
 	}
+}
+
+// Detect finds secrets
+func (d *Detector) Detect(b []byte, filePath string, commit string) []report.Finding {
+	var findings []report.Finding
+
+	// check if we should skip file based on the global allowlist or if the file is the same as the gitleaks config
+	if d.cfg.Allowlist.PathAllowed(filePath) || filePath == d.cfg.Path {
+		return findings
+	}
+
+	// linePairs is used for determining the start and end line of a finding
+	linePairs := newlineRe.FindAllIndex(b, -1)
+
+nextrule:
+	for _, r := range d.cfg.Rules {
+		if r.Allowlist.CommitAllowed(commit) {
+			continue
+		}
+		if r.Allowlist.PathAllowed(filePath) {
+			continue
+		}
+
+		// Check if path should be considered
+		if r.Path != nil {
+			if r.Path.Match([]byte(filePath)) {
+				if r.Regex == nil {
+					// This is a path only rule
+					f := report.Finding{
+						Description: r.Description,
+						File:        filePath,
+						RuleID:      r.RuleID,
+						Match:       fmt.Sprintf("file detected: %s", filePath),
+						Tags:        r.Tags,
+					}
+					findings = append(findings, f)
+					continue nextrule
+				}
+			}
+		}
+		findings = postProcess(append(findings, d.detectRule(r, b, filePath, commit, linePairs)...))
+	}
+
+	return findings
 }
 
 func (d *Detector) detectRule(r *config.Rule, b []byte, filePath string, commit string, linePairs [][]int) []report.Finding {
@@ -93,77 +149,56 @@ nextmatch:
 
 		// Check if the finding has an extractor associated with the rule, if it does, then recurse into
 		// detectRule to fill in details about the finding
-		foundExtractor := false
 		for _, extractor := range r.Extractors {
 			extractorFindings := d.detectRule(&extractor, b, filePath, commit, linePairs)
 			if len(extractorFindings) == 1 {
-				foundExtractor = true
-				fmt.Println(extractorFindings)
 				f.Secret = extractorFindings[0].Secret
 				f.RuleID = extractor.RuleID
 				f.Description = extractor.Description
 			}
 		}
-
-		// if the rule does not have any extractors associated with it, then add the finding to the findings
-		// OR if the rule has an extractor associated with it AND the extractor found a finding, then add the
-		// finding to the findings. This is to prevent duplicate findings.
-		if len(r.Extractors) == 0 || foundExtractor {
-			findings = append(findings, f)
-		}
+		findings = append(findings, f)
 	}
 	return findings
 }
 
-func (d *Detector) Detect(b []byte, filePath string, commit string) []report.Finding {
-	var findings []report.Finding
-	// check if we should skip file based on the global allowlist or if the file is the same as the gitleaks config
-	if d.cfg.Allowlist.PathAllowed(filePath) || filePath == d.cfg.Path {
-		return findings
-	}
+func postProcess(findings []report.Finding) []report.Finding {
+	var retFindings []report.Finding
+	for _, f := range findings {
+		include := true
+		// deduplicate
+		if strings.Contains(strings.ToLower(f.RuleID), "generic") {
+			for _, fPrime := range findings {
+				if f.StartLine == fPrime.StartLine &&
+					f.EndLine == fPrime.EndLine &&
+					f.Commit == fPrime.Commit &&
+					f.RuleID != fPrime.RuleID &&
+					strings.Contains(fPrime.Secret, f.Secret) &&
+					!strings.Contains(strings.ToLower(fPrime.RuleID), "generic") {
 
-	linePairs := newlineRe.FindAllIndex(b, -1)
-NEXTRULE:
-	for _, r := range d.cfg.Rules {
-		if r.Allowlist.CommitAllowed(commit) {
-			continue
-		}
-		if r.Allowlist.PathAllowed(filePath) {
-			continue
-		}
-
-		// Check if path should be considered
-		if r.Path != nil {
-			if r.Path.Match([]byte(filePath)) {
-				if r.Regex == nil {
-					// This is a path only rule
-					f := report.Finding{
-						Description: r.Description,
-						File:        filePath,
-						RuleID:      r.RuleID,
-						Match:       fmt.Sprintf("file detected: %s", filePath),
-						Tags:        r.Tags,
-					}
-					findings = append(findings, f)
-					continue NEXTRULE
+					genericMatch := strings.Replace(f.Match, f.Secret, "REDACTED", -1)
+					betterMatch := strings.Replace(fPrime.Match, fPrime.Secret, "REDACTED", -1)
+					log.Debug().Msgf("skipping %s finding (%s), %s rule takes precendence (%s)", f.RuleID, genericMatch, fPrime.RuleID, betterMatch)
+					include = false
+					break
 				}
 			}
 		}
 
-		findings = append(findings, d.detectRule(r, b, filePath, commit, linePairs)...)
+		// check if secret has any stop words
+		for _, stopword := range stopwords {
+			if strings.Contains(strings.ToLower(f.Secret), stopword) {
+				include = false
+				break
+			}
+		}
+
+		if include {
+			retFindings = append(retFindings, f)
+		}
 	}
 
-	// TODO
-	// DEDUPE
-	// POST FILTER (common words)
-	// process.env
-	// settings
-	// getenv
-	// env
-	// config.
-	// cfg.
-
-	return findings
+	return retFindings
 }
 
 func printFinding(f report.Finding) {

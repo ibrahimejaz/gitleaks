@@ -358,21 +358,19 @@ secretGroup = 1
     description = "Discord client secret"
     regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9=_\-]{32})['|\"|\n|\r|\s]'''
     secretGroup=1
-    # [[rules.extractors]]
-    # id = "dropbox-api-secret"
-    # description = "Dropbox API secret/key"
-    # mustContain = "dropbox"
-    # regex = '''[a-z0-9]{15}'''
-    # [[rules.extractors]]
-    # id = "dropbox-short-lived-api-token"
-    # description = "Dropbox short lived API token"
-    # mustContain = "dropbox"
-    # regex = '''sl\.[a-z0-9\-=_]{135}''' # TODO this is an annoying one... might be better to leave as its own
-    # [[rules.extractors]]
-    # id = "dropbox-long-lived-api-token"
-    # description = "Dropbox long lived API token"
-    # mustContain = "dropbox"
-    # regex = '''[a-z0-9]{11}(AAAAAAAAAA)[a-z0-9\-_=]{43}''' # TODO make check this
+    [[rules.extractors]]
+    id = "dropbox-api-secret"
+    description = "Dropbox API secret/key"
+    regex = '''(?i)dropbox.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9]{15})['|\"|\n|\r|\s]'''
+    [[rules.extractors]]
+    id = "dropbox-short-lived-api-token"
+    description = "Dropbox short lived API token"
+    regex = '''(?i)dropbox.+['|\"|\n|\r|\s|=|:=|:](sl\.[a-z0-9\-=_]{135})['|\"|\n|\r|\s]'''
+    [[rules.extractors]]
+    id = "dropbox-long-lived-api-token"
+    description = "Dropbox long lived API token"
+    mustContain = "dropbox"
+    regex = '''(?i)dropbox.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9]{11}(AAAAAAAAAA)[a-z0-9\-_=]{43})['|\"|\n|\r|\s]'''
     # [[rules.extractors]]
     # id = "fastly-api-token"
     # description = "Fastly API token"
