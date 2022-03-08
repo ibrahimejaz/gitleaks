@@ -186,26 +186,22 @@ regex = '''fio-u-(?i)[a-z0-9-_=]{64}'''
 id = "hashicorp-tf-api-token"
 description = "Hashicorp Terraform user/org API token"
 regex = '''['\"][a-z0-9]{14}\.atlasv1\.[a-z0-9-_=]{60,70}['\"]'''
-#
-#
+
 [[rules]]
 id = "linear-api-token"
 description = "Linear API token"
 regex = '''lin_api_(?i)[a-z0-9]{40}'''
-#
-[[rules]]
-# v slow
-id = "mapbox-api-token"
-description = "Mapbox API token"
-regex = '''(?i)(pk\.[a-z0-9]{60}\.[a-z0-9]{22})'''
-#
+
+# [[rules]]
+# id = "mapbox-api-token"
+# description = "Mapbox API token"
+# regex = '''(?i)(pk\.[a-z0-9]{60}\.[a-z0-9]{22})'''
+
 [[rules]]
 id = "new-relic-user-api-key"
 description = "New Relic user API Key"
 regex = '''NRAK-[A-Z0-9]{27}'''
 
-#
-#
 [[rules]]
 id = "new-relic-browser-api-token"
 description = "New Relic ingest browser API token"

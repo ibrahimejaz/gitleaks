@@ -69,7 +69,6 @@ func (d *Detector) Detect(b []byte, filePath string, commit string) []report.Fin
 
 	// linePairs is used for determining the start and end line of a finding
 	linePairs := newlineRe.FindAllIndex(b, -1)
-
 nextrule:
 	for _, r := range d.cfg.Rules {
 		if r.Allowlist.CommitAllowed(commit) {
@@ -117,7 +116,7 @@ nextrule:
 			findings = append(findings, detectRuleFindings...)
 		}
 
-		findings = postProcess(findings)
+		// findings = postProcess(findings)
 	}
 
 	return findings
