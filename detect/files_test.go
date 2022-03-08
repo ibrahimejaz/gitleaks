@@ -15,7 +15,6 @@ import (
 func TestFromFiles(t *testing.T) {
 	tests := []struct {
 		cfgName          string
-		opts             Options
 		source           string
 		expectedFindings []report.Finding
 	}{
@@ -70,7 +69,8 @@ func TestFromFiles(t *testing.T) {
 		viper.Unmarshal(&vc)
 		cfg, _ := vc.Translate()
 
-		findings, err := FromFiles(tt.source, cfg, tt.opts)
+		detector := NewDetector(cfg, false, false)
+		findings, err := detector.FromFiles(tt.source)
 		if err != nil {
 			t.Error(err)
 		}

@@ -93,6 +93,8 @@ nextrule:
 					findings = append(findings, f)
 					continue nextrule
 				}
+			} else {
+				continue
 			}
 		}
 

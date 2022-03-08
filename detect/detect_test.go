@@ -15,7 +15,6 @@ import (
 func TestDetectFindings(t *testing.T) {
 	tests := []struct {
 		cfgName          string
-		opts             Options
 		filePath         string
 		bytes            []byte
 		commit           string
@@ -142,6 +141,7 @@ func TestDetectFindings(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		t.Log(tt.cfgName)
 		viper.Reset()
 		viper.AddConfigPath(configPath)
 		viper.SetConfigName(tt.cfgName)
@@ -161,8 +161,9 @@ func TestDetectFindings(t *testing.T) {
 			}
 			assert.Equal(t, tt.wantError, err)
 		}
+		detector := NewDetector(cfg, false, false)
 
-		findings := DetectFindings(cfg, tt.bytes, tt.filePath, tt.commit)
+		findings := detector.Detect(tt.bytes, tt.filePath, tt.commit)
 		assert.ElementsMatch(t, tt.expectedFindings, findings)
 	}
 }

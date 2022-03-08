@@ -22,7 +22,6 @@ const configPath = "../testdata/config/"
 func TestFromGit(t *testing.T) {
 	tests := []struct {
 		cfgName          string
-		opts             Options
 		source           string
 		logOpts          string
 		expected         string
@@ -120,7 +119,8 @@ func TestFromGit(t *testing.T) {
 		viper.Unmarshal(&vc)
 		cfg, _ := vc.Translate()
 
-		findings := FromGit(files, cfg, tt.opts)
+		detector := NewDetector(cfg, false, false)
+		findings := detector.FromGit(files)
 		for _, f := range findings {
 			f.Match = "" // remove lines cause copying and pasting them has some wack formatting
 		}
