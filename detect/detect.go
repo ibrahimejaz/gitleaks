@@ -36,7 +36,7 @@ var (
 	}
 )
 
-const MAXGOROUTINES = 4
+const MAXGOROUTINES = 40
 
 func init() {
 	newlineRe = regexp.MustCompile("\n")
@@ -96,7 +96,28 @@ nextrule:
 				}
 			}
 		}
-		findings = postProcess(append(findings, d.detectRule(r, b, filePath, commit, linePairs)...))
+
+		detectRuleFindings := d.detectRule(r, b, filePath, commit, linePairs)
+		if len(r.Extractors) > 0 {
+			// check extractors before appending findings
+			for _, finding := range detectRuleFindings {
+				for _, extractor := range r.Extractors {
+					extractorFindings := d.detectRule(&extractor, []byte(finding.Match), filePath, commit, linePairs)
+					if len(extractorFindings) > 0 {
+						extractorFindings[0].StartLine = finding.StartLine
+						extractorFindings[0].EndLine = finding.EndLine
+						extractorFindings[0].StartColumn = finding.StartColumn
+						extractorFindings[0].EndColumn = finding.EndColumn
+						findings = append(findings, extractorFindings[0])
+						break
+					}
+				}
+			}
+		} else {
+			findings = append(findings, detectRuleFindings...)
+		}
+
+		findings = postProcess(findings)
 	}
 
 	return findings
@@ -105,7 +126,6 @@ nextrule:
 func (d *Detector) detectRule(r *config.Rule, b []byte, filePath string, commit string, linePairs [][]int) []report.Finding {
 	var findings []report.Finding
 	matchIndices := r.Regex.FindAllIndex(b, -1)
-nextmatch:
 	for _, m := range matchIndices {
 		location := getLocation(linePairs, m[0], m[1])
 		secret := strings.Trim(string(b[m[0]:m[1]]), "\n")
@@ -138,25 +158,19 @@ nextmatch:
 		}
 
 		// extract secret from secret group if set
+		skip := false
 		if r.EntropySet() {
 			include, entropy := r.IncludeEntropy(secret)
 			if include {
 				f.Entropy = float32(entropy)
 			} else {
-				continue nextmatch
+				skip = true
 			}
+		}
+		if skip {
+			continue
 		}
 
-		// Check if the finding has an extractor associated with the rule, if it does, then recurse into
-		// detectRule to fill in details about the finding
-		for _, extractor := range r.Extractors {
-			extractorFindings := d.detectRule(&extractor, b, filePath, commit, linePairs)
-			if len(extractorFindings) == 1 {
-				f.Secret = extractorFindings[0].Secret
-				f.RuleID = extractor.RuleID
-				f.Description = extractor.Description
-			}
-		}
 		findings = append(findings, f)
 	}
 	return findings
