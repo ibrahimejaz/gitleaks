@@ -4,13 +4,6 @@ import (
 	"regexp"
 )
 
-type Extractor struct {
-	ID          string
-	Description string
-	Regex       *regexp.Regexp
-	SecretGroup int
-}
-
 type Rule struct {
 	Description string
 	RuleID      string
@@ -20,7 +13,7 @@ type Rule struct {
 	Path        *regexp.Regexp
 	Tags        []string
 	Allowlist   Allowlist
-	Extractors  []Extractor
+	Extractors  []Rule
 }
 
 func (r *Rule) IncludeEntropy(secret string) (bool, float64) {

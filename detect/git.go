@@ -21,6 +21,9 @@ func FromGit(files <-chan *gitdiff.File, cfg config.Config, outputOptions Option
 	wg := sync.WaitGroup{}
 	concurrentGoroutines := make(chan struct{}, MAXGOROUTINES)
 	commitMap := make(map[string]bool)
+
+	detector := NewDetector(cfg, outputOptions.Verbose, outputOptions.Redact)
+
 	for f := range files {
 		// keep track of commits for logging
 		if f.PatchHeader != nil {
@@ -59,7 +62,7 @@ func FromGit(files <-chan *gitdiff.File, cfg config.Config, outputOptions Option
 					continue
 				}
 
-				for _, fi := range DetectFindings(cfg, []byte(tf.Raw(gitdiff.OpAdd)), f.NewName, commitSHA) {
+				for _, fi := range detector.Detect([]byte(tf.Raw(gitdiff.OpAdd)), f.NewName, commitSHA) {
 					// don't add to start/end lines if finding is from a file only rule
 					if !strings.HasPrefix(fi.Match, "file detected") {
 						fi.StartLine += int(tf.NewPosition)

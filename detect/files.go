@@ -23,6 +23,7 @@ func FromFiles(source string, cfg config.Config, outputOptions Options) ([]repor
 	concurrentGoroutines := make(chan struct{}, MAXGOROUTINES)
 	g, _ := errgroup.WithContext(context.Background())
 	paths := make(chan string)
+	detector := NewDetector(cfg, outputOptions.Verbose, outputOptions.Redact)
 	g.Go(func() error {
 		defer close(paths)
 		return filepath.Walk(source,
@@ -54,7 +55,7 @@ func FromFiles(source string, cfg config.Config, outputOptions Options) ([]repor
 				return err
 			}
 			fmt.Println(p, len(b))
-			fis := DetectFindings(cfg, b, p, "")
+			fis := detector.Detect(b, p, "")
 			for _, fi := range fis {
 				// need to add 1 since line counting starts at 1
 				fi.StartLine++

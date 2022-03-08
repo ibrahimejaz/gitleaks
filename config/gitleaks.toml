@@ -267,98 +267,96 @@ regex = '''tfp_[a-z0-9\-_\.=]{59}'''
 # extractors are used to determine what _kind_ of api keys were captured.
 id = "generic-api-key"
 description = "Generic API Key"
-regex = '''(?:'|"){0,1}(?:[a-z0-9\-_.]{0,25})(?:key|api|token|secret|client|password|pat)(?:[0-9a-z\-_\s.]{0,20})(?:'|"){0,1}(?:=|>|:=|\|\|:|<=|=>|:)(?:'|\"|\s|=){0,5}([0-9a-z\-_.=]{14,150})['|\"|\n|\r|\s]'''
+regex = '''(?i)(?:'|"){0,1}(?:[a-z0-9\-_.]{0,25})(?:key|api|token|secret|client|password|pat)(?:[0-9a-z\-_\s.]{0,20})(?:'|"){0,1}(?:=|>|:=|\|\|:|<=|=>|:)(?:'|\"|\s|=){0,5}([0-9a-z\-_.=]{14,150})['|\"|\n|\r|\s]'''
 entropy = 3.7
 secretGroup = 1
-    # [[rules.extractors]]
-    # id = "linkedin-client-id"
-    # description = "Linkedin Client token"
-    # mustContain = "linkedin"
-    # regex = '''[a-z0-9]{14}'''
-    # [[rules.extractors]]
-    # id = "linkedin-client-secret"
-    # description = "Linkedin Client Secret"
-    # mustContain = "linkedin"
-    # regex = '''[a-z0-9]{16}'''
-    # [[rules.extractors]]
-    # id = "heroku-api-key"
-    # description = "Heroku API Key"
-    # mustContain = "heroku"
-    # regex = ''' [0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}'''
-    # [[rules.extractors]]
-    # id = "facebook-token"
-    # description = "Facebook token"
-    # mustContain = "facebook"
-    # regex = '''[a-f0-9]{32}'''
-    # [[rules.extractors]]
-    # id = "twitter-token"
-    # description = "Twitter token"
-    # mustContain = "twitter"
-    # regex = '''[a-f0-9]{35,44}'''
-    # [[rules.extractors]]
-    # id = "adobe-client-id"
-    # description = "Adobe Client ID (Oauth Web)"
-    # mustContain = "adobe"
-    # regex = '''[a-f0-9]{32}'''
-    # [[rules.extractors]]
-    # id = "alibaba-secret-key"
-    # description = "Alibaba Secret Key"
-    # mustContain = "alibaba"
-    # regex = '''[a-z0-9]{30}'''
-    # [[rules.extractors]]
-    # id = "asana-client-id"
-    # description = "Asana Client ID"
-    # mustContain = "asana"
-    # regex = '''[0-9]{16}'''
-    # [[rules.extractors]]
-    # id = "asana-client-secret"
-    # description = "Asana Client Secret"
-    # mustContain = "asana"
-    # regex = '''[a-z0-9]{32}'''
-    # [[rules.extractors]]
-    # id = "atlassian-api-token"
-    # description = "Atlassian API token"
-    # mustContain = "atlassian"
-    # regex = '''[a-z0-9]{24}'''
-    # [[rules.extractors]]
-    # id = "bitbucket-client-id"
-    # description = "Bitbucket client ID"
-    # mustContain = "bitbucket"
-    # regex = '''[a-z0-9]{32}['\"]''' # TODO needs a limiter to prevent collison with client-secret
-    # [[rules.extractors]]
-    # id = "bitbucket-client-secret"
-    # description = "Bitbucket client secret"
-    # mustContain = "bitbucket"
-    # regex = '''[a-z0-9_\-]{64}'''
-    # [[rules.extractors]]
-    # id = "beamer-api-token"
-    # description = "Beamer API token"
-    # mustContain = "beamer"
-    # regex = '''b_[a-z0-9=_\-]{44}'''
-    # [[rules.extractors]]
-    # id = "contentful-api-token"
-    # description = "Contentful delivery API token"
-    # mustContain = "contentful"
-    # regex = '''[a-z0-9\-=_]{43}'''
-    # [[rules.extractors]]
-    # id = "databricks-api-token"
-    # description = "Databricks API token"
-    # mustContain = "databricks"
-    # regex = '''dapi[a-h0-9]{32}''' # TODO this _could_ be a standalone rule?
+    [[rules.extractors]]
+    id = "linkedin-client-id"
+    description = "Linkedin Client token"
+    regex = '''(?i)linkedin.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9]{14})['|\"|\n|\r|\s|=|:=|:]'''
+    secretGroup=1
+    [[rules.extractors]]
+    id = "linkedin-client-secret"
+    description = "Linkedin Client Secret"
+    regex = '''(?i)linkedin.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9]{16})['|\"|\n|\r|\s|=|:=|:]'''
+    secretGroup=1
+    [[rules.extractors]]
+    id = "heroku-api-key"
+    description = "Heroku API Key"
+    regex = ''' [0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}'''
+    [[rules.extractors]]
+    id = "facebook-token"
+    description = "Facebook token"
+    regex = '''(?i)facebook.+['|\"|\n|\r|\s|=|:=|:]([a-f0-9]{32})['|\"|\n|\r|\s|=|:=|:]'''
+    secretGroup=1
+    [[rules.extractors]]
+    id = "twitter-token"
+    description = "Twitter token"
+    mustContain = "twitter"
+    regex = '''(?i)twitter.+['|\"|\n|\r|\s|=|:=|:]([a-f0-9]{35,44})['|\"|\n|\r|\s|=|:=|:]'''
+    secretGroup=1
+    [[rules.extractors]]
+    id = "adobe-client-id"
+    description = "Adobe Client ID (Oauth Web)"
+    regex = '''(?i)adobe.+['|\"|\n|\r|\s|=|:=|:]([a-f0-9]{32})['|\"|\n|\r|\s|=|:=|:]'''
+    [[rules.extractors]]
+    id = "alibaba-secret-key"
+    description = "Alibaba Secret Key"
+    regex = '''(?i)alibaba.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9]{30})['|\"|\n|\r|\s|=|:=|:]'''
+    secretGroup=1
+    [[rules.extractors]]
+    id = "asana-client-id"
+    description = "Asana Client ID"
+    regex = '''(?i)asana.+['|\"|\n|\r|\s|=|:=|:]([0-9]{16})['|\"|\n|\r|\s|=|:=|:]'''
+    secretGroup=1
+    [[rules.extractors]]
+    id = "asana-client-secret"
+    description = "Asana Client Secret"
+    regex = '''(?i)asana.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9]{32})['|\"|\n|\r|\s|=|:=|:]'''
+    secretGroup=1
+    [[rules.extractors]]
+    id = "atlassian-api-token"
+    description = "Atlassian API token"
+    regex = '''(?i)atlassian.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9]{24})['|\"|\n|\r|\s|=|:=|:]'''
+    secretGroup=1
+    [[rules.extractors]]
+    id = "bitbucket-client-id"
+    description = "Bitbucket client ID"
+    regex = '''(?i)bitbucket.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9]{32})['|\"|\n|\r|\s|=|:=|:]'''
+    secretGroup=1
+    [[rules.extractors]]
+    id = "bitbucket-client-secret"
+    description = "Bitbucket client secret"
+    regex = '''(?i)bitbucket.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9_\-]{64})['|\"|\n|\r|\s|=|:=|:]'''
+    secretGroup=1
+    [[rules.extractors]]
+    id = "beamer-api-token"
+    description = "Beamer API token"
+    regex = '''(?i)beamer.+['|\"|\n|\r|\s|=|:=|:](b_[a-z0-9=_\-]{44})['|\"|\n|\r|\s|=|:=|:]'''
+    secretGroup=1
+    [[rules.extractors]]
+    id = "contentful-api-token"
+    description = "Contentful delivery API token"
+    secretGroup=1
+    regex = '''(?i)contentful.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9\-=_]{43})['|\"|\n|\r|\s]'''
+    [[rules.extractors]]
+    id = "databricks-api-token"
+    description = "Databricks API token"
+    regex = '''dapi[a-h0-9]{32}['|\"|\n|\r|\s]''' # TODO this _could_ be a standalone rule?
     [[rules.extractors]]
     id = "discord-api-token"
     description = "Discord API key"
-    regex = '''discord.+['|\"|\n|\r|\s|=|:=|:]([a-h0-9]{64})['|\"|\n|\r|\s]'''
+    regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([a-h0-9]{64})['|\"|\n|\r|\s]'''
     secretGroup=1
     [[rules.extractors]]
     id = "discord-client-id"
     description = "Discord client ID"
-    regex = '''discord.+['|\"|\n|\r|\s|=|:=|:]([0-9]{18})['|\"|\n|\r|\s]'''
+    regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([0-9]{18})['|\"|\n|\r|\s]'''
     secretGroup=1
     [[rules.extractors]]
     id = "discord-client-secret"
     description = "Discord client secret"
-    regex = '''discord.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9=_\-]{32})['|\"|\n|\r|\s]'''
+    regex = '''(?i)discord.+['|\"|\n|\r|\s|=|:=|:]([a-z0-9=_\-]{32})['|\"|\n|\r|\s]'''
     secretGroup=1
     # [[rules.extractors]]
     # id = "dropbox-api-secret"

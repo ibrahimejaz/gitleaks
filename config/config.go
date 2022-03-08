@@ -25,9 +25,11 @@ type ViperConfig struct {
 		Extractors  []struct {
 			ID          string
 			Description string
-			Regex       string
-			MustContain string
+			Entropy     float64
 			SecretGroup int
+			Regex       string
+			Path        string
+			Tags        []string
 		}
 
 		Allowlist struct {
@@ -79,13 +81,13 @@ func (vc *ViperConfig) Translate() (Config, error) {
 		} else {
 			configPathRegex = regexp.MustCompile(r.Path)
 		}
-		var extractors []Extractor
+		var extractors []Rule
 		for _, e := range r.Extractors {
 			extractorRegex := regexp.MustCompile(e.Regex)
-			extractors = append(extractors, Extractor{
+			extractors = append(extractors, Rule{
 				Regex:       extractorRegex,
 				Description: e.Description,
-				ID:          e.ID,
+				RuleID:      e.ID,
 				SecretGroup: e.SecretGroup,
 			})
 		}

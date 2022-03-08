@@ -1,7 +1,6 @@
 package detect
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"regexp"
@@ -30,21 +29,27 @@ type Detector struct {
 	redact  bool
 }
 
-type TextFragment struct {
+type DetectFragment struct {
 	text      string
 	linePairs [][]int
 	filepath  string
 	commit    string
+	rule      *config.Rule
+	finding   *report.Finding
 }
 
-func (d *Detector) DetectString(s string) []report.Finding {
-	var findings []report.Finding
-	return findings
+func NewDetector(cfg config.Config, verbose bool, redact bool) *Detector {
+	return &Detector{
+		cfg:     cfg,
+		verbose: verbose,
+		redact:  redact,
+	}
 }
 
-func (d *Detector) DetectRule(r *config.Rule, b []byte, filePath string, commit string, linePairs [][]int) []report.Finding {
+func (d *Detector) detectRule(r *config.Rule, b []byte, filePath string, commit string, linePairs [][]int) []report.Finding {
 	var findings []report.Finding
 	matchIndices := r.Regex.FindAllIndex(b, -1)
+nextmatch:
 	for _, m := range matchIndices {
 		location := getLocation(linePairs, m[0], m[1])
 		secret := strings.Trim(string(b[m[0]:m[1]]), "\n")
@@ -82,33 +87,30 @@ func (d *Detector) DetectRule(r *config.Rule, b []byte, filePath string, commit 
 			if include {
 				f.Entropy = float32(entropy)
 			} else {
-				return findings
+				continue nextmatch
 			}
 		}
 
-		// check if rule has extractor and update finding if match
+		// Check if the finding has an extractor associated with the rule, if it does, then recurse into
+		// detectRule to fill in details about the finding
+		foundExtractor := false
 		for _, extractor := range r.Extractors {
-			if extractor.Regex != nil && extractor.SecretGroup != 0 {
-				groups := extractor.Regex.FindStringSubmatch(f.Match)
-				if len(groups) < extractor.SecretGroup || len(groups) == 0 {
-					continue
-				}
-				f.Secret = groups[extractor.SecretGroup]
-				f.RuleID = extractor.ID
+			extractorFindings := d.detectRule(&extractor, b, filePath, commit, linePairs)
+			if len(extractorFindings) == 1 {
+				foundExtractor = true
+				fmt.Println(extractorFindings)
+				f.Secret = extractorFindings[0].Secret
+				f.RuleID = extractor.RuleID
 				f.Description = extractor.Description
-				fmt.Println(f)
-				goto APPENDFINDING
-			} else if extractor.Regex != nil {
-				// no secret group specific, check if there is a match
-				secret := extractor.Regex.FindString(f.Match)
-				if secret != "" {
-					f.Secret = secret
-					goto APPENDFINDING
-				}
 			}
 		}
-	APPENDFINDING:
-		findings = append(findings, f)
+
+		// if the rule does not have any extractors associated with it, then add the finding to the findings
+		// OR if the rule has an extractor associated with it AND the extractor found a finding, then add the
+		// finding to the findings. This is to prevent duplicate findings.
+		if len(r.Extractors) == 0 || foundExtractor {
+			findings = append(findings, f)
+		}
 	}
 	return findings
 }
@@ -120,7 +122,6 @@ func (d *Detector) Detect(b []byte, filePath string, commit string) []report.Fin
 		return findings
 	}
 
-	b = bytes.ToLower(b)
 	linePairs := newlineRe.FindAllIndex(b, -1)
 NEXTRULE:
 	for _, r := range d.cfg.Rules {
@@ -149,8 +150,19 @@ NEXTRULE:
 			}
 		}
 
-		findings = append(findings, d.DetectRule(r, b, filePath, commit, linePairs)...)
+		findings = append(findings, d.detectRule(r, b, filePath, commit, linePairs)...)
 	}
+
+	// TODO
+	// DEDUPE
+	// POST FILTER (common words)
+	// process.env
+	// settings
+	// getenv
+	// env
+	// config.
+	// cfg.
+
 	return findings
 }
 
