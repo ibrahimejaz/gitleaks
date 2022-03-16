@@ -1,4 +1,4 @@
-module github.com/zricethezav/gitleaks/v8
+module github.com/ibrahimejaz/gitleaks/v8
 
 go 1.17
 
