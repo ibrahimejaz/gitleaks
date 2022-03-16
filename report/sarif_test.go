@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/spf13/viper"
-	"github.com/zricethezav/gitleaks/v8/config"
+	"github.com/ibrahimejaz/gitleaks/v8/config"
 )
 
 const configPath = "../testdata/config/"
