@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/zricethezav/gitleaks/v8/config"
+	"github.com/ibrahimejaz/gitleaks/v8/config"
 )
 
 func writeSarif(cfg config.Config, findings []Finding, w io.WriteCloser) error {
