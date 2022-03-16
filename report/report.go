@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/zricethezav/gitleaks/v8/config"
+	"github.com/ibrahimejaz/gitleaks/v8/config"
 )
 
 const (
