@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/zricethezav/gitleaks/v8/report"
+	"github.com/ibrahimejaz/gitleaks/v8/report"
 
 	"github.com/gitleaks/go-gitdiff/gitdiff"
 	"github.com/rs/zerolog/log"
