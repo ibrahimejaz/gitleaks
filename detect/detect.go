@@ -9,9 +9,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/zricethezav/gitleaks/v8/config"
-	"github.com/zricethezav/gitleaks/v8/detect/git"
-	"github.com/zricethezav/gitleaks/v8/report"
+	"github.com/ibrahimejaz/gitleaks/v8/config"
+	"github.com/ibrahimejaz/gitleaks/v8/detect/git"
+	"github.com/ibrahimejaz/gitleaks/v8/report"
 
 	"github.com/fatih/semgroup"
 	"github.com/gitleaks/go-gitdiff/gitdiff"
